@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenSiv3D_Tetris", "OpenSiv3D_Tetris\OpenSiv3D_Tetris.vcxproj", "{CA311D18-D268-43F2-9152-91AD971CFDCC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA311D18-D268-43F2-9152-91AD971CFDCC}.Debug|x64.ActiveCfg = Debug|x64
+		{CA311D18-D268-43F2-9152-91AD971CFDCC}.Debug|x64.Build.0 = Debug|x64
+		{CA311D18-D268-43F2-9152-91AD971CFDCC}.Release|x64.ActiveCfg = Release|x64
+		{CA311D18-D268-43F2-9152-91AD971CFDCC}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C90C1278-9D8A-4296-861E-EB6163E1FD4E}
+	EndGlobalSection
+EndGlobal
