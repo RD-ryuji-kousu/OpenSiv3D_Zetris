@@ -297,6 +297,7 @@ private:
 	Vec2 bpos{0, 0};
 	double dx, dy;
 	int fx, fy, px1, px2;
+
 public:
 	Blocks() : dx(100), dy(100), fx(7), fy(0), px1(0), px2(4){
 		
@@ -381,7 +382,7 @@ public:
 		for (int y = 0; y < MINO_HEIGHT; y++) {
 			for (int x = 0; x < MINO_WIDTH; x++) {
 				if (tx + x < FIELD_WIDTH && ty + y < FIELD_HEIGHT) {
-					if (mino[t][r][y][x] == 1 && (field[ty + y + 1][tx + x + 1] == 1 || y + ty == 29)) {
+					if (mino[t][r][y][x] == 1 && (field[ty + y + 1][tx + x] == 1 || y + ty == 29)) {
 						return true;
 					}
 				}
@@ -390,7 +391,7 @@ public:
 		return false;
 	}
 
-	void move(int& tx, int& ty, int& r, int t) {
+	void move(int& tx, int& ty, int& r, int t, Stopwatch& time) {
 		int count = 0;
 		if (KeyZ.down()) {
 			++r;
@@ -406,7 +407,11 @@ public:
 		}
 		
 		ty += dy * Scene::DeltaTime();
-		
+		if (time >= 0.5s) {
+			fy++;
+			time.reset();
+		}
+
 		if (KeyA.pressed() || KeyLeft.pressed()) {
 
 			tx -= dx * Scene::DeltaTime();
@@ -452,9 +457,11 @@ public:
 			}
 		}
 
-		for (int y = 0; y < MINO_HEIGHT; ++y) {
-			for (int x = 0; x < MINO_WIDTH; ++x) {
-
+		if (hit(fx, fy, r, t) == true) {
+			for (int y = 0; y < 5; y++) {
+				for (int x = 0; x < 5; x++) {
+					field[fy][fx] |= mino[t][r][y][x + px1 + px2];
+				}
 			}
 		}
 	}
@@ -484,8 +491,10 @@ void Main()
 		Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0) };
 	Blocks block;
 	double rad = 0_deg;
+	Stopwatch time{ StartImmediately::No };
 	while (System::Update())
 	{
+		time.start();
 		debug.draw();
 	}
 }
