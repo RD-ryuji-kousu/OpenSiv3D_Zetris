@@ -253,7 +253,6 @@ char display[FIELD_HEIGHT][FIELD_LINE_WIDTH] = { 0 };
 class Block {
 private:
 	SizeF size;
-	int index;
 public:
 	RectF block;
 	ColorF color;
@@ -262,8 +261,8 @@ public:
 	/// @param _color ブロックの色
 	/// @param pos ブロックの描画位置
 	/// @param _index ブロックの番号（配列管理用）
-	Block(const ColorF& _color, const Vec2& pos, int _index) :
-		size{ 18, 18 }, color(_color), dpos(pos), block{pos, size}, index(_index) {}
+	Block(const ColorF& _color, const Vec2& pos) :
+		size{ 18, 18 }, color(_color), dpos(pos), block{pos, size} {}
 	const Vec2 LeftT()const {
 		return Vec2(block.x - size.x - 1, block.y);
 	}
@@ -303,77 +302,77 @@ public:
 		
 		for (int i = 0; i < 5; i++) {
 			if (i == 0) {
-				typei << Block(ColorF(Palette::Aqua), FIRST_BLOCK_POS, i);
+				typei << Block(ColorF(Palette::Aqua), FIRST_BLOCK_POS);
 			}
 			else {
-				typei << Block(ColorF(Palette::Aqua), typei[i - 1].LeftB(), i);
+				typei << Block(ColorF(Palette::Aqua), typei[i - 1].LeftB());
 			}
 		}
 		
 		for (int i = 0; i < 4; i++) {
 			if (i == 0) {
-				typel << Block(ColorF(Palette::Orange), FIRST_BLOCK_POS, i);
+				typel << Block(ColorF(Palette::Orange), FIRST_BLOCK_POS);
 			}
 			else if (i == 3) {
-				typel << Block(ColorF(Palette::Orange), typel[i - 1].RightT(), i);
+				typel << Block(ColorF(Palette::Orange), typel[i - 1].RightT());
 			}
 			else {
-				typel << Block(ColorF(Palette::Orange), typel[i - 1].LeftB(), i);
+				typel << Block(ColorF(Palette::Orange), typel[i - 1].LeftB());
 			}
 		}
 		for (int i = 0; i < 4; i++) {
 			if (i == 0) {
-				typej << Block(ColorF(Palette::Blue), FIRST_BLOCK_POS, i);
+				typej << Block(ColorF(Palette::Blue), FIRST_BLOCK_POS);
 			}
 			else if (i == 3) {
-				typej << Block(ColorF(Palette::Blue), typej[2].LeftT(), i);
+				typej << Block(ColorF(Palette::Blue), typej[2].LeftT());
 			}
 			else {
-				typej << Block(ColorF(Palette::Blue), typej[i - 1].LeftB(), i);
+				typej << Block(ColorF(Palette::Blue), typej[i - 1].LeftB());
 			}
 		}
 		for (int i = 0; i < 4; i++) {
 			if (i == 0) {
-				typez << Block(ColorF(Palette::Lightgreen), FIRST_BLOCK_POS, i);
+				typez << Block(ColorF(Palette::Lightgreen), FIRST_BLOCK_POS);
 			}
 			else if (i == 2) {
-				typez << Block(ColorF(Palette::Lightgreen), typez[i - 1].LeftB(), i);
+				typez << Block(ColorF(Palette::Lightgreen), typez[i - 1].LeftB());
 			}
 			else {
-				typez << Block(ColorF(Palette::Lightgreen), typez[i - 1].RightT(), i);
+				typez << Block(ColorF(Palette::Lightgreen), typez[i - 1].RightT());
 			}
 		}
 		for (int i = 0; i < 4; i++) {
 			if (i == 0) {
-				types << Block(ColorF(Palette::Red), FIRST_BLOCK_POS, i);
+				types << Block(ColorF(Palette::Red), FIRST_BLOCK_POS);
 			}
 			else if (i == 2) {
-				types << Block(ColorF(Palette::Red), types[i - 1].LeftB(), i);
+				types << Block(ColorF(Palette::Red), types[i - 1].LeftB());
 			}
 			else {
-				types << Block(ColorF(Palette::Red), types[i - 1].LeftT(), i);
+				types << Block(ColorF(Palette::Red), types[i - 1].LeftT());
 			}
 		}
 		for (int i = 0; i < 4; i++) {
 			if (i == 0) {
-				typeo << Block(ColorF(Palette::Yellow), FIRST_BLOCK_POS, i);
+				typeo << Block(ColorF(Palette::Yellow), FIRST_BLOCK_POS);
 			}
 			else if (i == 2) {
-				typeo << Block(ColorF(Palette::Yellow), typeo[0].LeftT(), i);
+				typeo << Block(ColorF(Palette::Yellow), typeo[0].LeftT());
 			}
 			else {
-				typeo << Block(ColorF(Palette::Yellow), typeo[i - 1].LeftB(), i);
+				typeo << Block(ColorF(Palette::Yellow), typeo[i - 1].LeftB());
 			}
 		}
 		for (int i = 0; i < 4; i++) {
 			if (i == 0) {
-				typet << Block(ColorF(Palette::Magenta), FIRST_BLOCK_POS, i);
+				typet << Block(ColorF(Palette::Magenta), FIRST_BLOCK_POS);
 			}
 			else if (i == 3) {
-				typet << Block(ColorF(Palette::Magenta), typet[1].LeftB(), i);
+				typet << Block(ColorF(Palette::Magenta), typet[1].LeftB());
 			}
 			else {
-				typet << Block(ColorF(Palette::Magenta), typet[i - 1].LeftT(), i);
+				typet << Block(ColorF(Palette::Magenta), typet[i - 1].LeftT());
 			}
 		}
 	}
@@ -406,7 +405,6 @@ public:
 			}
 		}
 		
-		ty += dy * Scene::DeltaTime();
 		if (time >= 0.5s) {
 			fy++;
 			time.reset();
@@ -414,7 +412,6 @@ public:
 
 		if (KeyA.pressed() || KeyLeft.pressed()) {
 
-			tx -= dx * Scene::DeltaTime();
 			--fx;
 			if (fx == 0) {
 				for (int y = 0; y < 5; ++y) {
@@ -456,16 +453,28 @@ public:
 				fy = 29;
 			}
 		}
-
+		for (int y = 0; y < 5; ++y) {
+			for (int x = 0; x < 5; ++x) {
+				display[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
+			}
+		}
 		if (hit(fx, fy, r, t) == true) {
 			for (int y = 0; y < 5; y++) {
 				for (int x = 0; x < 5; x++) {
-					field[fy][fx] |= mino[t][r][y][x + px1 + px2];
+					field[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
 				}
 			}
 		}
 	}
-
+	void Draw(ColorF c) {
+		for (int y = 0; y < FIELD_HEIGHT; ++y) {
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				if (display[y][x] == 1) {
+					Block(c, Vec2(FIELD_WIDTH_0 + (x * 18), FIELD_HEIGHT_0 + (y * 18))).block.draw();
+				}
+			}
+		}
+	}
 	Array<Block>& Get_typet() {
 		return typet;
 	}
