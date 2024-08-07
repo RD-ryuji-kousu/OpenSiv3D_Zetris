@@ -1,4 +1,5 @@
 ﻿ // Siv3D v0.6.14
+
 #include "stdafx.h";
 
 const int FIELD_WIDTH = 15;
@@ -10,6 +11,8 @@ const int FIELD_LINE_WIDTH = 650;
 const int FIELD_LINE_HEIGHT = 560;
 const int FIELD_WIDTH_0 = 380;
 const int FIELD_HEIGHT_0 = 20;
+
+
 
 enum minotype {
 	TYPE_I, TYPE_L, TYPE_J, TYPE_Z, TYPE_S,
@@ -245,10 +248,11 @@ char mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
 	},
 
 };
+char display[FIELD_HEIGHT][FIELD_WIDTH] = { 0 };
+char field[FIELD_HEIGHT][FIELD_WIDTH] = { 0 };
 
-char field[FIELD_HEIGHT][FIELD_LINE_WIDTH] = { 0 };
-char display[FIELD_HEIGHT][FIELD_LINE_WIDTH] = { 0 };
-
+const ColorF minoc[TYPE_MAX] = { Palette::Aqua, Palette::Orange, Palette::Blue,
+Palette::Lightgreen, Palette::Red, Palette::Yellow, Palette::Magenta };
 /// @brief ブロック一個単位のクラス
 class Block {
 private:
@@ -286,95 +290,19 @@ const Vec2 FIRST_BLOCK_POS = { 400, 100 };
 /// @brief ブロック生成
 class Blocks {
 private:
-	Array<Block> typei;
-	Array<Block> typel;
-	Array<Block> typej;
-	Array<Block> typez;
-	Array<Block> types;
-	Array<Block> typeo;
-	Array<Block> typet;
+
 	Vec2 bpos{0, 0};
 	double dx, dy;
 	int fx, fy, px1, px2;
 
 public:
-	Blocks() : dx(100), dy(100), fx(7), fy(0), px1(0), px2(4){
-		
-		for (int i = 0; i < 5; i++) {
-			if (i == 0) {
-				typei << Block(ColorF(Palette::Aqua), FIRST_BLOCK_POS);
-			}
-			else {
-				typei << Block(ColorF(Palette::Aqua), typei[i - 1].LeftB());
-			}
-		}
-		
-		for (int i = 0; i < 4; i++) {
-			if (i == 0) {
-				typel << Block(ColorF(Palette::Orange), FIRST_BLOCK_POS);
-			}
-			else if (i == 3) {
-				typel << Block(ColorF(Palette::Orange), typel[i - 1].RightT());
-			}
-			else {
-				typel << Block(ColorF(Palette::Orange), typel[i - 1].LeftB());
-			}
-		}
-		for (int i = 0; i < 4; i++) {
-			if (i == 0) {
-				typej << Block(ColorF(Palette::Blue), FIRST_BLOCK_POS);
-			}
-			else if (i == 3) {
-				typej << Block(ColorF(Palette::Blue), typej[2].LeftT());
-			}
-			else {
-				typej << Block(ColorF(Palette::Blue), typej[i - 1].LeftB());
-			}
-		}
-		for (int i = 0; i < 4; i++) {
-			if (i == 0) {
-				typez << Block(ColorF(Palette::Lightgreen), FIRST_BLOCK_POS);
-			}
-			else if (i == 2) {
-				typez << Block(ColorF(Palette::Lightgreen), typez[i - 1].LeftB());
-			}
-			else {
-				typez << Block(ColorF(Palette::Lightgreen), typez[i - 1].RightT());
-			}
-		}
-		for (int i = 0; i < 4; i++) {
-			if (i == 0) {
-				types << Block(ColorF(Palette::Red), FIRST_BLOCK_POS);
-			}
-			else if (i == 2) {
-				types << Block(ColorF(Palette::Red), types[i - 1].LeftB());
-			}
-			else {
-				types << Block(ColorF(Palette::Red), types[i - 1].LeftT());
-			}
-		}
-		for (int i = 0; i < 4; i++) {
-			if (i == 0) {
-				typeo << Block(ColorF(Palette::Yellow), FIRST_BLOCK_POS);
-			}
-			else if (i == 2) {
-				typeo << Block(ColorF(Palette::Yellow), typeo[0].LeftT());
-			}
-			else {
-				typeo << Block(ColorF(Palette::Yellow), typeo[i - 1].LeftB());
-			}
-		}
-		for (int i = 0; i < 4; i++) {
-			if (i == 0) {
-				typet << Block(ColorF(Palette::Magenta), FIRST_BLOCK_POS);
-			}
-			else if (i == 3) {
-				typet << Block(ColorF(Palette::Magenta), typet[1].LeftB());
-			}
-			else {
-				typet << Block(ColorF(Palette::Magenta), typet[i - 1].LeftT());
-			}
-		}
+	Blocks() : dx(100), dy(100), fx(3), fy(0), px1(0), px2(4){
+	}
+
+	int reset_mino() {
+		fx = 5;
+		fy = 0;
+		return Random((TYPE_I, (TYPE_MAX - 1)));
 	}
 
 	bool hit(int tx, int ty, int r, int t) {
@@ -390,106 +318,159 @@ public:
 		return false;
 	}
 
-	void move(int& tx, int& ty, int& r, int t, Stopwatch& time) {
-		int count = 0;
-		if (KeyZ.down()) {
-			++r;
-			if (r > 4) {
-				r = 0;
+	void put_minos(int &r, int t) {
+		for (int y = 0; y <= 5; ++y) {
+			for (int x = 0; x <= 5; ++x) {
+				field[y][2 + x] |= mino[t][r][y][x];
 			}
 		}
-		if (KeyX.down()) {
-			 --r;
-			if (r < 0) {
-				r = 3;
-			}
-		}
-		
-		if (time >= 0.5s) {
-			fy++;
-			time.reset();
-		}
+	}
 
-		if (KeyA.pressed() || KeyLeft.pressed()) {
-
-			--fx;
-			if (fx == 0) {
-				for (int y = 0; y < 5; ++y) {
-					if (mino[t][r][y][px1] == 0) {
-						count++;
-					}
-				}
-				if (count == 5) {
-					++px1;
+	void move(int& r, int t, Stopwatch& time, bool& put_mino) {
+		if (put_mino == false) {
+			put_minos(r, t);
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				if (field[0][x] == 1) {
+					fx = x;
 				}
 			}
-			else {
-				px1 = 0;
-			}
-		}count = 0;
-		if (KeyD.pressed() || KeyRight.pressed()) {
+			put_mino = true;
+		}
+		if (put_mino == true) {
 			
-			tx += dx * Scene::DeltaTime();
-			if (fx == FIELD_WIDTH - 1) {
-				for (int y = 0; y < 5; ++y) {
-					if (mino[t][r][y][px2] == 0) {
-						++count;
+			int count = 0;
+			if (KeyZ.down()) {
+				++r;
+				if (r > 4) {
+					r = 0;
+				}
+			}
+			if (KeyX.down()) {
+				--r;
+				if (r < 0) {
+					r = 3;
+				}
+			}
+
+			if (time >= 0.5s) {
+				fy++;
+				time.reset();
+			}
+
+			if (KeyA.pressed() || KeyLeft.pressed()) {
+
+				--fx;
+				if (fx < 0)
+				{
+					fx = 0;
+				}
+				if (fx == 0) {
+					/*
+					for (int y = 0; y < 5; ++y) {
+						if (mino[t][r][y][px1] == 0) {
+							count++;
+						}
 					}
-					
+					*/
+					if (count == 5) {
+						++px1;
+					}
 				}
-				if (count == 5) {
-					--px2;
+				/*
+				else {
+					px1 = 0;
+				}*/
+			}count = 0;
+			if (KeyD.pressed() || KeyRight.pressed()) {
+				++fx;
+				if (fx >= FIELD_WIDTH) {
+					fx = FIELD_WIDTH - 1;
+				}
+				if (fx == FIELD_WIDTH - 1) {
+					/*
+					for (int y = 0; y < 5; ++y) {
+						if (mino[t][r][y][px2] == 0) {
+							++count;
+						}
+
+					}
+					if (count == 5) {
+						--px2;
+					}*/
+				}
+				/*
+				else {
+					px2 = 0;
+				}*/
+
+			}
+			if (KeyS.pressed() || KeyDown.pressed()) {
+
+				++fy;
+				if (fy > 29) {
+					fy = 29;
 				}
 			}
-			else {
-				px2 = 0;
+
+			if (hit(fx, fy, r, t) == true) {
+				for (int y = 0; y < 5; y++) {
+					for (int x = 0; x < 5; x++) {
+						field[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
+					}
+				}
+				reset_mino();
+				put_mino = false;
 			}
-			++fx;
 		}
-		if (KeyS.pressed() || KeyDown.pressed()) {
-			ty += dy * Scene::DeltaTime();
-			++fy;
-			if (fy > 29) {
-				fy = 29;
-			}
-		}
+	}
+	void Draw(int t, int r) {
+
 		for (int y = 0; y < 5; ++y) {
 			for (int x = 0; x < 5; ++x) {
 				display[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
 			}
 		}
-		if (hit(fx, fy, r, t) == true) {
-			for (int y = 0; y < 5; y++) {
-				for (int x = 0; x < 5; x++) {
-					field[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
-				}
-			}
-		}
-	}
-	void Draw(ColorF c) {
+		Array<Block> dsply;
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				if (display[y][x] == 1) {
-					Block(c, Vec2(FIELD_WIDTH_0 + (x * 18), FIELD_HEIGHT_0 + (y * 18))).block.draw();
+					dsply << Block(minoc[t], Vec2(FIELD_WIDTH_0 + (x * 18), FIELD_HEIGHT_0 + (y * 18)));
+				}
+			}
+		}
+		for (auto& it : dsply) {
+			it.block.draw(it.color);
+		}
+
+
+	}
+
+	void erase_block() {
+		for (int y = 0; y < FIELD_HEIGHT - 1; ++y) {
+			bool Islinefilled = true;
+			for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
+				if (1 != field[y][x]) {
+					Islinefilled = false;
+				}
+			}
+			if (Islinefilled == true) {
+				char tmp[FIELD_HEIGHT][FIELD_WIDTH] = {0};
+				std::memcpy(&tmp, &field, sizeof(tmp));
+				for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
+					field[y][x] = 0;
+					field[y][x] = tmp[y - 1][x];
 				}
 			}
 		}
 	}
-	Array<Block>& Get_typet() {
-		return typet;
+
+	int rand_t() {
+		return Random((TYPE_I, (TYPE_MAX - 1)));
 	}
 
-	void Debug_Draw() {
-		for (auto it = typet.begin(); it != typet.end();it++) {
-			it->block.draw(it->color);
-		}
-	}
-	
 };
 
-void Debug_DrawF() {
-	
-}
+
 
 void Main()
 {
@@ -499,11 +480,14 @@ void Main()
 		Vec2(FIELD_LINE_WIDTH, FIELD_LINE_HEIGHT), Vec2(FIELD_WIDTH_0, FIELD_LINE_HEIGHT),
 		Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0) };
 	Blocks block;
-	double rad = 0_deg;
+	int r = 0, t = block.rand_t();
+	bool put_mino = false;
 	Stopwatch time{ StartImmediately::No };
 	while (System::Update())
 	{
 		time.start();
+		block.move(r, t, time, put_mino);
+		block.Draw(t, r);
 		debug.draw();
 	}
 }
