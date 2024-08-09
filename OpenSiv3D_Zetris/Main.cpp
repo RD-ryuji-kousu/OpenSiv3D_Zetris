@@ -23,233 +23,233 @@ enum minoangle {
 	ANGLE_0, ANGLE, _90, ANGLE_180, ANGLE_270, ANGLE_MAX
 };
 
-char mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
+Color mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
 			{
 		//TYPE_I
 		{
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
 		{
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 	},
 	//TYPE_L
 	{
-		{0, 0, 0, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 1, 1, 0,
-		0, 0, 0, 0, 0},
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black},
 
-		{0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0,
-		0, 1, 1, 1, 0,
-		0, 1, 0, 0, 0,
-		0, 0, 0, 0, 0
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Orange, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
-		{0, 0, 0, 0, 0,
-		0, 1, 1, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 0, 0, 0
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
-		{0, 0, 0, 0, 0,
-		0, 0, 0, 1, 0,
-		0, 1, 1, 1, 0,
-		0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0},
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Orange, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black},
 
 	},
 	// TYPE_J
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 1, 0, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Blue, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Blue, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 	},
 	//TYPE_Z
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black, Palette::Black,
 		},
 	},
 	//TYPE_S
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Red, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 1, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Red, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Red, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 1, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Red, Palette::Black,
 		},
 	},
 	//TYPE_O
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 	},
 	//TYPE_T
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Magenta, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Magenta, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 	},
 
 };
-char display[FIELD_HEIGHT][FIELD_WIDTH] = { 0 };
-char field[FIELD_HEIGHT][FIELD_WIDTH] = { 0 };
+Color display[FIELD_HEIGHT][FIELD_WIDTH] = { Palette::Black };
+Color field[FIELD_HEIGHT][FIELD_WIDTH] = { Palette::Black };
 
 const ColorF minoc[TYPE_MAX] = { Palette::Aqua, Palette::Orange, Palette::Blue,
 Palette::Lightgreen, Palette::Red, Palette::Yellow, Palette::Magenta };
@@ -309,7 +309,8 @@ public:
 		for (int y = 0; y < MINO_HEIGHT; y++) {
 			for (int x = 0; x < MINO_WIDTH; x++) {
 				if (tx + x < FIELD_WIDTH && ty + y < FIELD_HEIGHT) {
-					if (mino[t][r][y][x] == 1 && (field[ty + y + 1][tx + x] == 1 || y + ty == 29)) {
+					if (mino[t][r][y][x] != Palette::Black &&
+						(field[ty + y + 1][tx + x] != Palette::Black || y + ty == 29)) {
 						return true;
 					}
 				}
@@ -321,7 +322,9 @@ public:
 	void put_minos(int &r, int t) {
 		for (int y = 0; y <= 5; ++y) {
 			for (int x = 0; x <= 5; ++x) {
-				field[y][2 + x] |= mino[t][r][y][x];
+				if (mino[t][r][y][x] != Palette::Black) {
+					display[y][2 + x] = mino[t][r][y][x];
+				}
 			}
 		}
 	}
@@ -330,14 +333,13 @@ public:
 		if (put_mino == false) {
 			put_minos(r, t);
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
-				if (field[0][x] == 1) {
+				if (field[0][x] != Palette::Black) {
 					fx = x;
 				}
 			}
 			put_mino = true;
 		}
 		if (put_mino == true) {
-			
 			int count = 0;
 			if (KeyZ.down()) {
 				++r;
@@ -412,10 +414,13 @@ public:
 				}
 			}
 
+
 			if (hit(fx, fy, r, t) == true) {
 				for (int y = 0; y < 5; y++) {
 					for (int x = 0; x < 5; x++) {
-						field[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
+						if (fy + y < FIELD_HEIGHT && fx + x < FIELD_WIDTH && x + px1 + px2 > MINO_WIDTH && x + px1 + px2 < 0) {
+							field[fy + y][fx + x] = mino[t][r][y][x + px1 + px2];
+						}
 					}
 				}
 				reset_mino();
@@ -424,17 +429,18 @@ public:
 		}
 	}
 	void Draw(int t, int r) {
+		memcpy(display, field, sizeof(display));
 
 		for (int y = 0; y < 5; ++y) {
 			for (int x = 0; x < 5; ++x) {
-				display[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
+				display[fy + y][fx + x] = mino[t][r][y][x + px1 + px2];
 			}
 		}
 		Array<Block> dsply;
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
-				if (display[y][x] == 1) {
-					dsply << Block(minoc[t], Vec2(FIELD_WIDTH_0 + (x * 18), FIELD_HEIGHT_0 + (y * 18)));
+				if (display[y][x] != Palette::Black) {
+					dsply << Block(display[y][x], Vec2(FIELD_WIDTH_0 + (x * 18), FIELD_HEIGHT_0 + (y * 18)));
 				}
 			}
 		}
@@ -449,15 +455,15 @@ public:
 		for (int y = 0; y < FIELD_HEIGHT - 1; ++y) {
 			bool Islinefilled = true;
 			for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
-				if (1 != field[y][x]) {
+				if (Palette::Black != field[y][x]) {
 					Islinefilled = false;
 				}
 			}
 			if (Islinefilled == true) {
-				char tmp[FIELD_HEIGHT][FIELD_WIDTH] = {0};
+				Color tmp[FIELD_HEIGHT][FIELD_WIDTH] = { Palette::Black };
 				std::memcpy(&tmp, &field, sizeof(tmp));
 				for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
-					field[y][x] = 0;
+					field[y][x] = Palette::Black;
 					field[y][x] = tmp[y - 1][x];
 				}
 			}
