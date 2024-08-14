@@ -250,7 +250,8 @@ Color mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
 };
 Color display[FIELD_HEIGHT][FIELD_WIDTH] = {};
 Color field[FIELD_HEIGHT][FIELD_WIDTH] = {};
-const static int mino_height[TYPE_MAX] = { 5, 3, 3, 2, 2, 2, 3 };
+const static int mino_height[TYPE_MAX][ANGLE_MAX] = { {5, 1, 5, 1}, {3, 2, 3, 1,},  {3, 1, 3, 2},
+	{2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2},{2, 3, 2, 3} };
 const static int mino_xposl[TYPE_MAX][ANGLE_MAX] = { {2,0,2,0}, {2, 1, 1, 1},
 	{1, 1, 2, 1}, {1, 1, 1, 1}, {1, 2, 1, 2}, {2, 2, 1, 1}, {1, 1, 1, 2} };
 const static int mino_xposr[TYPE_MAX][ANGLE_MAX] = { {2,0,2,0}, {1, 1, 2, 1},
@@ -336,7 +337,7 @@ public:
 
 
 	
-	void move(int& r, int& t, Stopwatch& time, Stopwatch& release) {
+	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, Stopwatch& cd) {
 
 		if (KeyZ.down()) {
 			++r;
@@ -351,12 +352,9 @@ public:
 			}
 		}
 
-		if (time >= 0.5s) {
-			++fy;
-			time.reset();
-		}
+		
 
-		if (KeyA.pressed() || KeyLeft.pressed()) {
+		if (KeyA.down() || KeyLeft.down()) {
 
 			--fx;
 			if (fx < 0)
@@ -364,6 +362,13 @@ public:
 				fx = 0;
 			}
 			if (fx == 0) {
+				for (int y = 0; y < MINO_HEIGHT; ++y) {
+					for (int x = 0; x < MINO_WIDTH; ++x) {
+						if (mino[t][r][y][x] == Palette::Black) {
+
+						}
+					}
+				}
 				--px1;
 			}
 			if (px1 != 0) {
@@ -373,7 +378,7 @@ public:
 				px1 = -mino_xposl[t][r];
 			}
 		}
-		if (KeyD.pressed() || KeyRight.pressed()) {
+		if (KeyD.down() || KeyRight.down()) {
 			++fx;
 			if (fx >= FIELD_WIDTH) {
 				fx = FIELD_WIDTH - 1;
@@ -388,16 +393,6 @@ public:
 				px2 = mino_xposr[t][r];
 			}
 		}
-		if (KeyS.pressed() || KeyDown.pressed()) {
-
-			++fy;
-			if (fy + mino_height[t] > 29) {
-				fy = 29 - mino_height[t];
-			}
-		}
-		Print << fx;
-		Print << fy;
-		Print << time;
 		if (hit(fx, fy, r, t) == true) {
 			for (int y = 0; y < 5; y++) {
 				for (int x = 0; x < 5; x++) {
@@ -409,6 +404,18 @@ public:
 
 			t = reset_mino();
 		}
+		if (KeyS.pressed() || KeyDown.pressed()) {
+
+			++fy;
+		}
+		if (time >= 0.5s) {
+			++fy;
+			time.reset();
+		}
+		Print << fx;
+		Print << fy;
+		Print << time;
+
 
 	}
 	void Draw(int t, int r) {
@@ -439,7 +446,7 @@ public:
 	}
 
 	void erase_block() {
-		for (int y = 0; y < FIELD_HEIGHT - 1; ++y) {
+		for (int y = FIELD_HEIGHT - 1; y > 0; ) {
 			bool Islinefilled = true;
 			for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
 				if (Palette::Black != field[y][x]) {
@@ -447,12 +454,14 @@ public:
 				}
 			}
 			if (Islinefilled == true) {
-				Color tmp[FIELD_HEIGHT][FIELD_WIDTH] = { Palette::Black };
-				std::memcpy(&tmp, &field, sizeof(tmp));
 				for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
 					field[y][x] = Palette::Black;
-					field[y][x] = tmp[y - 1][x];
+					field[y][x] = field[y - 1][x];
 				}
+			}
+			else
+			{
+				--y;
 			}
 		}
 	}
@@ -474,11 +483,11 @@ void Main()
 		Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0) };
 	Blocks block;
 	int r = 0, t = block.rand_t();
-	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No };
+	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No }, cd{StartImmediately::No};
 	while (System::Update())
 	{
 		time.start();
-		block.move(r, t, time, release);
+		block.move(r, t, time, release, cd);
 		block.Draw(t, r);
 		debug.draw();
 	}
