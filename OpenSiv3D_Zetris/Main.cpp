@@ -1,6 +1,6 @@
 ﻿ // Siv3D v0.6.14
 
-#include "stdafx.h";
+#include "stdafx.h"
 
 const int FIELD_WIDTH = 15;
 const int FIELD_HEIGHT = 30;
@@ -23,234 +23,239 @@ enum minoangle {
 	ANGLE_0, ANGLE, _90, ANGLE_180, ANGLE_270, ANGLE_MAX
 };
 
-char mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
+Color mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
 			{
 		//TYPE_I
 		{
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
 		{
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Aqua, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua, Palette::Aqua,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 	},
 	//TYPE_L
 	{
-		{0, 0, 0, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 1, 1, 0,
-		0, 0, 0, 0, 0},
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black},
 
-		{0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0,
-		0, 1, 1, 1, 0,
-		0, 1, 0, 0, 0,
-		0, 0, 0, 0, 0
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Orange, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
-		{0, 0, 0, 0, 0,
-		0, 1, 1, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 1, 0, 0,
-		0, 0, 0, 0, 0
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Orange, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
-		{0, 0, 0, 0, 0,
-		0, 0, 0, 1, 0,
-		0, 1, 1, 1, 0,
-		0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0},
+		{Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Orange, Palette::Orange, Palette::Orange, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+		Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black},
 
 	},
 	// TYPE_J
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue,  Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 1, 0, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Blue, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Blue, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 0
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Blue, Palette::Blue, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Blue, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black
 		},
 	},
 	//TYPE_Z
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black, Palette::Black,
 		},
 
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Lightgreen, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Lightgreen, Palette::Black, Palette::Black, Palette::Black,
 		},
 	},
 	//TYPE_S
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Red, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 1, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Red, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Red, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 1, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Red, Palette::Red, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Red, Palette::Black,
 		},
 	},
 	//TYPE_O
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Yellow, Palette::Yellow, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 	},
 	//TYPE_T
 	{
 		{
-			0, 0, 0, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Magenta, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 1, 1, 1, 0,
-			0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Magenta, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 		{
-			0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 1, 1, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 0, 0,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Magenta, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Magenta, Palette::Black, Palette::Black,
+			Palette::Black, Palette::Black, Palette::Black, Palette::Black, Palette::Black,
 		},
 	},
 
 };
-char display[FIELD_HEIGHT][FIELD_WIDTH] = { 0 };
-char field[FIELD_HEIGHT][FIELD_WIDTH] = { 0 };
-
+Color display[FIELD_HEIGHT][FIELD_WIDTH] = {};
+Color field[FIELD_HEIGHT][FIELD_WIDTH] = {};
+const static int mino_height[TYPE_MAX][ANGLE_MAX] = { {5, 1, 5, 1}, {3, 2, 3, 1,},  {3, 1, 3, 2},
+	{2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2},{2, 3, 2, 3} };
+const static int mino_xposl[TYPE_MAX][ANGLE_MAX] = { {2,0,2,0}, {2, 1, 1, 1},
+	{1, 1, 2, 1}, {1, 1, 1, 1}, {1, 2, 1, 2}, {2, 2, 1, 1}, {1, 1, 1, 2} };
+const static int mino_xposr[TYPE_MAX][ANGLE_MAX] = { {2,0,2,0}, {1, 1, 2, 1},
+	{2, 1, 1, 1}, {1, 2, 1, 2}, {1, 1, 1, 1}, {1, 1, 2, 2}, {1, 2, 1, 1} };
 const ColorF minoc[TYPE_MAX] = { Palette::Aqua, Palette::Orange, Palette::Blue,
 Palette::Lightgreen, Palette::Red, Palette::Yellow, Palette::Magenta };
 /// @brief ブロック一個単位のクラス
@@ -266,7 +271,7 @@ public:
 	/// @param pos ブロックの描画位置
 	/// @param _index ブロックの番号（配列管理用）
 	Block(const ColorF& _color, const Vec2& pos) :
-		size{ 18, 18 }, color(_color), dpos(pos), block{pos, size} {}
+		size{ 17, 17 }, color(_color), dpos(pos), block{pos, size} {}
 	const Vec2 LeftT()const {
 		return Vec2(block.x - size.x - 1, block.y);
 	}
@@ -293,10 +298,16 @@ private:
 
 	Vec2 bpos{0, 0};
 	double dx, dy;
-	int fx, fy, px1, px2;
+	int fx, fy, px1, px2, py;
 
 public:
-	Blocks() : dx(100), dy(100), fx(3), fy(0), px1(0), px2(4){
+	Blocks() : dx(100), dy(100), fx(5), fy(0), px1(0), px2(0), py(0){
+		for (int y = 0; y < FIELD_HEIGHT; ++y) {
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				field[y][x] = Palette::Black;
+				display[y][x] = Palette::Black;
+			}
+		}
 	}
 
 	int reset_mino() {
@@ -306,11 +317,17 @@ public:
 	}
 
 	bool hit(int tx, int ty, int r, int t) {
-		for (int y = 0; y < MINO_HEIGHT; y++) {
+		for (int y = 0; y < MINO_HEIGHT; ++y) {
 			for (int x = 0; x < MINO_WIDTH; x++) {
 				if (tx + x < FIELD_WIDTH && ty + y < FIELD_HEIGHT) {
-					if (mino[t][r][y][x] == 1 && (field[ty + y + 1][tx + x] == 1 || y + ty == 29)) {
-						return true;
+					if (mino[t][r][y][x] != Palette::Black) {
+						if (field[ty + y + 1][tx + x] != Palette::Black || y + ty == 29)
+						{
+							if (y + ty == 29) {
+								py = y;
+							}
+							return true;
+						}
 					}
 				}
 			}
@@ -318,123 +335,106 @@ public:
 		return false;
 	}
 
-	void put_minos(int &r, int t) {
-		for (int y = 0; y <= 5; ++y) {
-			for (int x = 0; x <= 5; ++x) {
-				field[y][2 + x] |= mino[t][r][y][x];
+
+	
+	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, Stopwatch& cd) {
+
+		if (KeyZ.down()) {
+			++r;
+			if (r > 4) {
+				r = 0;
 			}
 		}
-	}
-
-	void move(int& r, int t, Stopwatch& time, bool& put_mino) {
-		if (put_mino == false) {
-			put_minos(r, t);
-			for (int x = 0; x < FIELD_WIDTH; ++x) {
-				if (field[0][x] == 1) {
-					fx = x;
-				}
+		if (KeyX.down()) {
+			--r;
+			if (r < 0) {
+				r = 3;
 			}
-			put_mino = true;
 		}
-		if (put_mino == true) {
-			
-			int count = 0;
-			if (KeyZ.down()) {
-				++r;
-				if (r > 4) {
-					r = 0;
-				}
-			}
-			if (KeyX.down()) {
-				--r;
-				if (r < 0) {
-					r = 3;
-				}
-			}
 
-			if (time >= 0.5s) {
-				fy++;
-				time.reset();
+		
+
+		if (KeyA.down() || KeyLeft.down()) {
+
+			--fx;
+			if (fx < 0)
+			{
+				fx = 0;
 			}
+			if (fx == 0) {
+				for (int y = 0; y < MINO_HEIGHT; ++y) {
+					for (int x = 0; x < MINO_WIDTH; ++x) {
+						if (mino[t][r][y][x] == Palette::Black) {
 
-			if (KeyA.pressed() || KeyLeft.pressed()) {
-
-				--fx;
-				if (fx < 0)
-				{
-					fx = 0;
-				}
-				if (fx == 0) {
-					/*
-					for (int y = 0; y < 5; ++y) {
-						if (mino[t][r][y][px1] == 0) {
-							count++;
 						}
 					}
-					*/
-					if (count == 5) {
-						++px1;
-					}
 				}
-				/*
-				else {
-					px1 = 0;
-				}*/
-			}count = 0;
-			if (KeyD.pressed() || KeyRight.pressed()) {
-				++fx;
-				if (fx >= FIELD_WIDTH) {
-					fx = FIELD_WIDTH - 1;
-				}
-				if (fx == FIELD_WIDTH - 1) {
-					/*
-					for (int y = 0; y < 5; ++y) {
-						if (mino[t][r][y][px2] == 0) {
-							++count;
-						}
-
-					}
-					if (count == 5) {
-						--px2;
-					}*/
-				}
-				/*
-				else {
-					px2 = 0;
-				}*/
-
+				--px1;
 			}
-			if (KeyS.pressed() || KeyDown.pressed()) {
-
-				++fy;
-				if (fy > 29) {
-					fy = 29;
-				}
+			if (px1 != 0) {
+				px2 = 0;
 			}
-
-			if (hit(fx, fy, r, t) == true) {
-				for (int y = 0; y < 5; y++) {
-					for (int x = 0; x < 5; x++) {
-						field[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
-					}
-				}
-				reset_mino();
-				put_mino = false;
+			if (px1 < -mino_xposl[t][r]) {
+				px1 = -mino_xposl[t][r];
 			}
 		}
+		if (KeyD.down() || KeyRight.down()) {
+			++fx;
+			if (fx >= FIELD_WIDTH) {
+				fx = FIELD_WIDTH - 1;
+			}
+			if (fx == FIELD_WIDTH - 1) {
+				++px2;
+			}
+			if (px2 != 0) {
+				px1 = 0;
+			}
+			if (px2 > mino_xposr[t][r]) {
+				px2 = mino_xposr[t][r];
+			}
+		}
+		if (hit(fx, fy, r, t) == true) {
+			for (int y = 0; y < 5; y++) {
+				for (int x = 0; x < 5; x++) {
+					if (mino[t][r][y][x] != Palette::Black) {
+						field[fy + y][fx + x] = mino[t][r][y][x + px1 + px2];
+					}
+				}
+			}
+
+			t = reset_mino();
+		}
+		if (KeyS.pressed() || KeyDown.pressed()) {
+
+			++fy;
+		}
+		if (time >= 0.5s) {
+			++fy;
+			time.reset();
+		}
+		Print << fx;
+		Print << fy;
+		Print << time;
+
+
 	}
 	void Draw(int t, int r) {
+		for (int y = 0; y < FIELD_HEIGHT; ++y) {
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				display[y][x] = field[y][x];
+			}
+		}
 
 		for (int y = 0; y < 5; ++y) {
 			for (int x = 0; x < 5; ++x) {
-				display[fy + y][fx + x] |= mino[t][r][y][x + px1 + px2];
+				display[fy + y][fx + x] = mino[t][r][y][x + px1 + px2];
 			}
 		}
 		Array<Block> dsply;
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
-				if (display[y][x] == 1) {
-					dsply << Block(minoc[t], Vec2(FIELD_WIDTH_0 + (x * 18), FIELD_HEIGHT_0 + (y * 18)));
+				if (display[y][x] != Palette::Black) {
+					dsply << Block(display[y][x], Vec2(FIELD_WIDTH_0 + ((x + px1 + px2) * 18), FIELD_HEIGHT_0 + (y * 18)));
 				}
 			}
 		}
@@ -446,20 +446,22 @@ public:
 	}
 
 	void erase_block() {
-		for (int y = 0; y < FIELD_HEIGHT - 1; ++y) {
+		for (int y = FIELD_HEIGHT - 1; y > 0; ) {
 			bool Islinefilled = true;
 			for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
-				if (1 != field[y][x]) {
+				if (Palette::Black != field[y][x]) {
 					Islinefilled = false;
 				}
 			}
 			if (Islinefilled == true) {
-				char tmp[FIELD_HEIGHT][FIELD_WIDTH] = {0};
-				std::memcpy(&tmp, &field, sizeof(tmp));
 				for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
-					field[y][x] = 0;
-					field[y][x] = tmp[y - 1][x];
+					field[y][x] = Palette::Black;
+					field[y][x] = field[y - 1][x];
 				}
+			}
+			else
+			{
+				--y;
 			}
 		}
 	}
@@ -481,12 +483,11 @@ void Main()
 		Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0) };
 	Blocks block;
 	int r = 0, t = block.rand_t();
-	bool put_mino = false;
-	Stopwatch time{ StartImmediately::No };
+	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No }, cd{StartImmediately::No};
 	while (System::Update())
 	{
 		time.start();
-		block.move(r, t, time, put_mino);
+		block.move(r, t, time, release, cd);
 		block.Draw(t, r);
 		debug.draw();
 	}
