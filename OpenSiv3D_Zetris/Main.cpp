@@ -297,11 +297,11 @@ class Blocks {
 private:
 
 	Vec2 bpos{0, 0};
-	double dx, dy;
+	//fx 落下物のX,　fy　落下物のY, px1 左端の空白埋め, px2 右端の空白埋め, py 下の空白埋め 
 	int fx, fy, px1, px2, py;
 
 public:
-	Blocks() : dx(100), dy(100), fx(5), fy(0), px1(0), px2(0), py(0){
+	Blocks() : fx(5), fy(0), px1(0), px2(0), py(0){
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				field[y][x] = Palette::Black;
@@ -317,14 +317,14 @@ public:
 	}
 
 	bool hit(int tx, int ty, int r, int t) {
-		for (int y = 0; y < MINO_HEIGHT; ++y) {
-			for (int x = 0; x < MINO_WIDTH; x++) {
+		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
 				if (tx + x < FIELD_WIDTH && ty + y < FIELD_HEIGHT) {
 					if (mino[t][r][y][x] != Palette::Black) {
 						if (field[ty + y + 1][tx + x] != Palette::Black || y + ty == 29)
 						{
 							if (y + ty == 29) {
-								py = y;
+								py -= y;
 							}
 							return true;
 						}
@@ -335,17 +335,54 @@ public:
 		return false;
 	}
 
+	void ret_px(int& tx1, int& tx2, int t, int r) {
+		bool flag = false;
+		for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
+			for (int y = 0; y < MINO_HEIGHT && flag != true; ++y) {
+				if (mino[t][r][y][x] != Palette::Black) {
+					tx1 = x;
+					flag = true;
+				}
+			}
+		}
+		flag = false;
+		for (int x = MINO_WIDTH - 1; x >= 0 && flag != true; --x) {
+			for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+				if (mino[t][r][y][x] != Palette::Black) {
+					tx2 = x;
+					flag = true;
+				}
+			}
+		}
+	}
 
 	
 	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, Stopwatch& cd) {
 
+		ret_px(px1, px2, t, r);
 		if (KeyZ.down()) {
+			int x1 = 0, x2 = 0;
+			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);
+			if (fx < 0 - x1) {
+				fx = 0 - x1;
+			}
+			else if (fx >= FIELD_WIDTH - x2) {
+				fx = FIELD_WIDTH - 1 - x2;
+			}
 			++r;
 			if (r > 4) {
 				r = 0;
 			}
 		}
 		if (KeyX.down()) {
+			int x1 = 0, x2 = 0;
+			ret_px(x1, x2, t, (r - 1 < 0) ? 3 : r - 1);
+			if (fx < 0 - x1) {
+				fx = 0 - x1;
+			}
+			else if (fx >= FIELD_WIDTH - x2) {
+				fx = FIELD_WIDTH - 1 - x2;
+			}
 			--r;
 			if (r < 0) {
 				r = 3;
@@ -355,49 +392,71 @@ public:
 		
 
 		if (KeyA.down() || KeyLeft.down()) {
-
-			--fx;
-			if (fx < 0)
-			{
-				fx = 0;
-			}
-			if (fx == 0) {
-				for (int y = 0; y < MINO_HEIGHT; ++y) {
-					for (int x = 0; x < MINO_WIDTH; ++x) {
-						if (mino[t][r][y][x] == Palette::Black) {
-
-						}
+			bool flag_fx = false;
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+					if (field[fy][fx - 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
+						flag_fx = false;
+					}
+					else {
+						flag_fx = true;
 					}
 				}
-				--px1;
 			}
-			if (px1 != 0) {
-				px2 = 0;
+			if (flag_fx == true) {
+				--fx;
 			}
-			if (px1 < -mino_xposl[t][r]) {
-				px1 = -mino_xposl[t][r];
+			if (fx < 0 - px1)
+			{
+				fx = 0 - px1;
 			}
+
 		}
 		if (KeyD.down() || KeyRight.down()) {
-			++fx;
-			if (fx >= FIELD_WIDTH) {
-				fx = FIELD_WIDTH - 1;
+			bool flag_fx = false;
+			for (int x = MINO_WIDTH - 1; x >= 0; --x) {
+				for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+					if (field[fy][fx + 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
+						flag_fx = false;
+					}
+					else {
+						flag_fx = true;
+					}
+				}
 			}
-			if (fx == FIELD_WIDTH - 1) {
-				++px2;
+			if (flag_fx == true) {
+				++fx;
 			}
-			if (px2 != 0) {
-				px1 = 0;
+			if (fx >= FIELD_WIDTH - px2) {
+				fx = FIELD_WIDTH - 1 - px2;
 			}
-			if (px2 > mino_xposr[t][r]) {
-				px2 = mino_xposr[t][r];
+
+
+		}
+		
+		bool flag = false;
+		for (int y = MINO_HEIGHT - 1; y >= 0 && flag != true; --y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				if (mino[t][r][y][x] != Palette::Black) {
+					py = 5 - y;
+					flag = true;
+				}
 			}
 		}
+
+
+		
 		if (hit(fx, fy, r, t) == true) {
-			for (int y = 0; y < 5; y++) {
-				for (int x = 0; x < 5; x++) {
+			int count_x = 0, count_y = 0;
+			for (int y = 0; y < 5; ++y) {
+				for (int x = 0; x < 5; ++x) {
 					if (mino[t][r][y][x] != Palette::Black) {
-						field[fy + y][fx + x] = mino[t][r][y][x + px1 + px2];
+						if (fx < 15) {
+							field[fy + y][fx + x] = mino[t][r][y][x];
+						}
+						else {
+							field[fy + y][fx + x - px2] = mino[t][r][y][x];
+						}
 					}
 				}
 			}
@@ -405,13 +464,17 @@ public:
 			t = reset_mino();
 		}
 		if (KeyS.pressed() || KeyDown.pressed()) {
-
 			++fy;
+			if (hit(fx, fy, r, t) == true) {
+
+			}
 		}
 		if (time >= 0.5s) {
 			++fy;
 			time.reset();
 		}
+		
+		
 		Print << fx;
 		Print << fy;
 		Print << time;
@@ -427,14 +490,16 @@ public:
 
 		for (int y = 0; y < 5; ++y) {
 			for (int x = 0; x < 5; ++x) {
-				display[fy + y][fx + x] = mino[t][r][y][x + px1 + px2];
+				if (mino[t][r][y][x] != Palette::Black) {
+					display[fy + y][fx + x] = mino[t][r][y][x];
+				}
 			}
 		}
 		Array<Block> dsply;
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				if (display[y][x] != Palette::Black) {
-					dsply << Block(display[y][x], Vec2(FIELD_WIDTH_0 + ((x + px1 + px2) * 18), FIELD_HEIGHT_0 + (y * 18)));
+					dsply << Block(display[y][x], Vec2(FIELD_WIDTH_0 + ((x) * 18), FIELD_HEIGHT_0 + (y * 18)));
 				}
 			}
 		}
@@ -446,17 +511,28 @@ public:
 	}
 
 	void erase_block() {
+		int line_count = 0;
+		bool Islinefilled = true;
 		for (int y = FIELD_HEIGHT - 1; y > 0; ) {
-			bool Islinefilled = true;
-			for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
-				if (Palette::Black != field[y][x]) {
+			Islinefilled = true;
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				if (field[y][x] == Palette::Black) {
 					Islinefilled = false;
+				}
+				else {
+					++line_count;
 				}
 			}
 			if (Islinefilled == true) {
-				for (int x = 0; x < FIELD_WIDTH - 1; ++x) {
-					field[y][x] = Palette::Black;
-					field[y][x] = field[y - 1][x];
+				if (y > 0) {
+					for (int z = y; z > 0; --z) {
+						for (int x = 0; x < FIELD_WIDTH; ++x) {
+							field[z][x] = field[z - 1][x];
+						}
+					}
+					for (int x = 0; x < FIELD_WIDTH; ++x) {
+						field[0][x] = Palette::Black;
+					}
 				}
 			}
 			else
@@ -476,6 +552,7 @@ public:
 
 void Main()
 {
+
 	// 背景の色を設定する | Set the background color
 	Scene::SetBackground(ColorF{ 0.0, 0.0, 0.0 });
 	LineString debug = { Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0), Vec2(FIELD_LINE_WIDTH, FIELD_HEIGHT_0),
@@ -489,6 +566,7 @@ void Main()
 		time.start();
 		block.move(r, t, time, release, cd);
 		block.Draw(t, r);
+		block.erase_block();
 		debug.draw();
 	}
 }
