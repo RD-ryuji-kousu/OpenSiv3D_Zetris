@@ -335,6 +335,42 @@ public:
 		return false;
 	}
 
+	bool hitX(int t, int r) {
+		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				if (mino[t][r][y][x] != Palette::Black && field[fy][fx - 1] != Palette::Black) {
+					return true;
+				}
+			}
+		}
+		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int x = MINO_WIDTH - 1; x >= 0; --x) {
+				if (mino[t][r][y][x] != Palette::Black && field[fy][fx + 1] != Palette::Black) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool hitXY(int t, int r) {
+		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				if (mino[t][r][y][x] != Palette::Black && field[fy - 1][fx - 1] != Palette::Black) {
+					return true;
+				}
+			}
+		}
+		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int x = MINO_WIDTH - 1; x >= 0; --x) {
+				if (mino[t][r][y][x] != Palette::Black && field[fy - 1][fx + 1] != Palette::Black) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	void ret_px(int& tx1, int& tx2, int t, int r) {
 		bool flag = false;
 		for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
@@ -392,10 +428,10 @@ public:
 		
 
 		if (KeyA.down() || KeyLeft.down()) {
-			bool flag_fx = false;
-			for (int x = 0; x < MINO_WIDTH; ++x) {
-				for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-					if (field[fy][fx - 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
+			bool flag_fx = true;
+			for (int x = 0; x < MINO_WIDTH&&flag_fx != false; ++x) {
+				for (int y = MINO_HEIGHT - 1; y >= 0 && flag_fx != false; --y) {
+					if (field[fy + y][fx + x - 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
 						flag_fx = false;
 					}
 					else {
@@ -413,10 +449,10 @@ public:
 
 		}
 		if (KeyD.down() || KeyRight.down()) {
-			bool flag_fx = false;
-			for (int x = MINO_WIDTH - 1; x >= 0; --x) {
-				for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-					if (field[fy][fx + 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
+			bool flag_fx = true;
+			for (int x = MINO_WIDTH - 1; x >= 0 && flag_fx != false; --x) {
+				for (int y = MINO_HEIGHT - 1; y >= 0 && flag_fx != false; --y) {
+					if (field[fy + y][fx + x + 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
 						flag_fx = false;
 					}
 					else {
@@ -444,32 +480,32 @@ public:
 			}
 		}
 
-
 		
-		if (hit(fx, fy, r, t) == true) {
-			int count_x = 0, count_y = 0;
+		if (hit(fx, fy, r, t) == true && hitXY(t, r)==false) {
+			bool hitf = false;
 			for (int y = 0; y < 5; ++y) {
 				for (int x = 0; x < 5; ++x) {
-					if (mino[t][r][y][x] != Palette::Black) {
-						if (fx < 15) {
-							field[fy + y][fx + x] = mino[t][r][y][x];
-						}
-						else {
-							field[fy + y][fx + x - px2] = mino[t][r][y][x];
-						}
+					if (mino[t][r][y][x] != Palette::Black && release >= 0.5s) {
+						field[fy + y][fx + x] = mino[t][r][y][x];
+						hitf = true;
+					}
+					else if (mino[t][r][y][x] != Palette::Black && release <= 0s) {
+						release.start();
 					}
 				}
 			}
-
-			t = reset_mino();
+			if (hitf == true) {
+				release.reset();
+				t = reset_mino();
+			}
 		}
-		if (KeyS.pressed() || KeyDown.pressed()) {
+		if (release<=0s && (KeyS.pressed() || KeyDown.pressed())) {
 			++fy;
 			if (hit(fx, fy, r, t) == true) {
 
 			}
 		}
-		if (time >= 0.5s) {
+		if (time >= 0.5s && release <= 0s) {
 			++fy;
 			time.reset();
 		}
