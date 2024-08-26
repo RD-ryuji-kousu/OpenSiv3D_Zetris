@@ -13,16 +13,16 @@ const int FIELD_WIDTH_0 = 380;
 const int FIELD_HEIGHT_0 = 20;
 
 
-
+//ミノの形管理index用
 enum minotype {
 	TYPE_I, TYPE_L, TYPE_J, TYPE_Z, TYPE_S,
 	TYPE_O, TYPE_T, TYPE_MAX
 };
-
+//ミノのアングル管理index用
 enum minoangle {
 	ANGLE_0, ANGLE, _90, ANGLE_180, ANGLE_270, ANGLE_MAX
 };
-
+//ミノの実体配列
 Color mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
 			{
 		//TYPE_I
@@ -248,16 +248,44 @@ Color mino[TYPE_MAX][ANGLE_MAX][MINO_HEIGHT][MINO_WIDTH] = {
 	},
 
 };
+//ミノの画面表示
 Color display[FIELD_HEIGHT][FIELD_WIDTH] = {};
+//固定されたミノ管理
 Color field[FIELD_HEIGHT][FIELD_WIDTH] = {};
-const static int mino_height[TYPE_MAX][ANGLE_MAX] = { {5, 1, 5, 1}, {3, 2, 3, 1,},  {3, 1, 3, 2},
-	{2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2},{2, 3, 2, 3} };
-const static int mino_xposl[TYPE_MAX][ANGLE_MAX] = { {2,0,2,0}, {2, 1, 1, 1},
-	{1, 1, 2, 1}, {1, 1, 1, 1}, {1, 2, 1, 2}, {2, 2, 1, 1}, {1, 1, 1, 2} };
-const static int mino_xposr[TYPE_MAX][ANGLE_MAX] = { {2,0,2,0}, {1, 1, 2, 1},
-	{2, 1, 1, 1}, {1, 2, 1, 2}, {1, 1, 1, 1}, {1, 1, 2, 2}, {1, 2, 1, 1} };
-const ColorF minoc[TYPE_MAX] = { Palette::Aqua, Palette::Orange, Palette::Blue,
-Palette::Lightgreen, Palette::Red, Palette::Yellow, Palette::Magenta };
+
+
+//スタート画面
+class Start {
+public:
+	void View() {
+		font(first).draw(Arg::center(400, 200));
+	}
+private:
+	const Font font{ 60 };
+	String first = U"Start press 'F'";
+};
+
+//ゲームオーバー画面
+class Over {
+public:
+	/*
+	@param[in] text1	条件に則したテキストを受け取る
+	*/
+	void View() {
+		title(text1).draw(Arg::center(400, 100), Palette::Red);
+		font(restart).draw(Arg::center(400, 400));
+		font(quit).draw(Arg::center(400, 500));
+	}
+private:
+	const Font title{ 100 };
+	const Font font{ 60 };
+	String text1 = U"Missed!!";
+	String restart = U"Restart Press'R'";
+	String quit = U"Quit Press 'Q'";
+};
+
+
+
 /// @brief ブロック一個単位のクラス
 class Block {
 private:
@@ -272,25 +300,9 @@ public:
 	/// @param _index ブロックの番号（配列管理用）
 	Block(const ColorF& _color, const Vec2& pos) :
 		size{ 17, 17 }, color(_color), dpos(pos), block{pos, size} {}
-	const Vec2 LeftT()const {
-		return Vec2(block.x - size.x - 1, block.y);
-	}
-	const Vec2 RightT()const {
-		return Vec2(block.x + size.x + 1, block.y);
-	}
-	const Vec2 LeftB()const {
-		return Vec2(block.x, block.y + size.y + 1);
-	}
-	const double x()const {
-		return block.x;
-	}
-	const double y()const {
-		return block.y;
-	}
 
 };
 
-const Vec2 FIRST_BLOCK_POS = { 400, 100 };
 
 /// @brief ブロック生成
 class Blocks {
@@ -301,6 +313,7 @@ private:
 	int fx, fy, px1, px2, py;
 
 public:
+	/// @brief コンストラクタ及びfield,displayの初期化
 	Blocks() : fx(5), fy(0), px1(0), px2(0), py(0){
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
@@ -309,21 +322,26 @@ public:
 			}
 		}
 	}
-
+	/// @brief ミノの初期位置を設定しランダムに形を設定
+	/// @return ミノの形をランダムに返す
 	int reset_mino() {
 		fx = 5;
 		fy = 0;
 		return Random((TYPE_I, (TYPE_MAX - 1)));
 	}
-
-	bool hit(int tx, int ty, int r, int t) {
+	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
+	/// @param[in] r ミノのアングル
+	/// @param[in] t ミノの形
+	/// @return ミノが底辺と他ミノとhitしたか否かをtrue,falseで返す
+	bool hit(int r, int t) {
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
-				if (tx + x < FIELD_WIDTH && ty + y < FIELD_HEIGHT) {
+				if (fx + x < FIELD_WIDTH && fy + y < FIELD_HEIGHT) {
 					if (mino[t][r][y][x] != Palette::Black) {
-						if (field[ty + y + 1][tx + x] != Palette::Black || y + ty == 29)
+						if (field[fy + y + 1][fx + x] != Palette::Black || y + fy == 29)
 						{
-							if (y + ty == 29) {
+							///yが底辺を超えたら補正する
+							if (y + fy == 29) {
 								py -= y;
 							}
 							return true;
@@ -335,70 +353,50 @@ public:
 		return false;
 	}
 
-	bool hitX(int t, int r) {
-		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-			for (int x = 0; x < MINO_WIDTH; ++x) {
-				if (mino[t][r][y][x] != Palette::Black && field[fy][fx - 1] != Palette::Black) {
-					return true;
-				}
-			}
-		}
-		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-			for (int x = MINO_WIDTH - 1; x >= 0; --x) {
-				if (mino[t][r][y][x] != Palette::Black && field[fy][fx + 1] != Palette::Black) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	bool hitXY(int t, int r) {
-		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-			for (int x = 0; x < MINO_WIDTH; ++x) {
-				if (mino[t][r][y][x] != Palette::Black && field[fy - 1][fx - 1] != Palette::Black) {
-					return true;
-				}
-			}
-		}
-		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-			for (int x = MINO_WIDTH - 1; x >= 0; --x) {
-				if (mino[t][r][y][x] != Palette::Black && field[fy - 1][fx + 1] != Palette::Black) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
+	
+	/// @brief ミノの両端を調べる
+	/// @param[in, out] tx1 ミノの左端
+	/// @param[in,out] tx2 ミノの右端
+	/// @param[in] t ミノの形 
+	/// @param[in] r ミノのアングル
 	void ret_px(int& tx1, int& tx2, int t, int r) {
 		bool flag = false;
+		//ミノの左端を調べる
 		for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
 			for (int y = 0; y < MINO_HEIGHT && flag != true; ++y) {
 				if (mino[t][r][y][x] != Palette::Black) {
 					tx1 = x;
-					flag = true;
+					flag = true;	// 見つけたらループを抜ける
 				}
 			}
 		}
 		flag = false;
+		//ミノの右端を調べる
 		for (int x = MINO_WIDTH - 1; x >= 0 && flag != true; --x) {
-			for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int y = MINO_HEIGHT - 1; y >= 0 && flag != true; --y) {
 				if (mino[t][r][y][x] != Palette::Black) {
 					tx2 = x;
-					flag = true;
+					flag = true;	 //見つけたらループを抜ける
 				}
 			}
 		}
 	}
 
-	
-	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, Stopwatch& cd) {
+	/// @brief ミノの動き及び、処理
+	/// @param[in, out] r ミノのアングル
+	/// @param[in, out] t ミノの形
+	/// @param[in, out] time ミノの落ちる間隔の管理
+	/// @param[in, out] release ミノのがぶつかってから操作出来る時間の管理
+	/// @param[in, out] game ゲームのステート
+	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, String& game) {
 
 		ret_px(px1, px2, t, r);
+		//Zを押したときアングルを90°正回転
 		if (KeyZ.down()) {
+			//回転後の左端x1,右端x2
 			int x1 = 0, x2 = 0;
 			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);
+			//回転後端を超えてしまう場合補正
 			if (fx < 0 - x1) {
 				fx = 0 - x1;
 			}
@@ -406,10 +404,12 @@ public:
 				fx = FIELD_WIDTH - 1 - x2;
 			}
 			++r;
-			if (r > 4) {
+			//rは常に0～3
+			if (r > 3) {
 				r = 0;
 			}
 		}
+		//Xを押したとき90°逆回転
 		if (KeyX.down()) {
 			int x1 = 0, x2 = 0;
 			ret_px(x1, x2, t, (r - 1 < 0) ? 3 : r - 1);
@@ -426,9 +426,10 @@ public:
 		}
 
 		
-
+		//Aか←キーで左移動
 		if (KeyA.down() || KeyLeft.down()) {
 			bool flag_fx = true;
+			//移動先に移動済みの石があるかチェック
 			for (int x = 0; x < MINO_WIDTH&&flag_fx != false; ++x) {
 				for (int y = MINO_HEIGHT - 1; y >= 0 && flag_fx != false; --y) {
 					if (field[fy + y][fx + x - 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
@@ -439,15 +440,18 @@ public:
 					}
 				}
 			}
+			//移動先に石がなければ移動
 			if (flag_fx == true) {
 				--fx;
 			}
+			//ミノの左端を考慮した上で画面左端を超えないよう補正
 			if (fx < 0 - px1)
 			{
 				fx = 0 - px1;
 			}
 
 		}
+		//Dか→キーで右移動
 		if (KeyD.down() || KeyRight.down()) {
 			bool flag_fx = true;
 			for (int x = MINO_WIDTH - 1; x >= 0 && flag_fx != false; --x) {
@@ -471,18 +475,24 @@ public:
 		}
 		
 		bool flag = false;
+		//ミノの一番下をチェック
 		for (int y = MINO_HEIGHT - 1; y >= 0 && flag != true; --y) {
-			for (int x = 0; x < MINO_WIDTH; ++x) {
+			for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
 				if (mino[t][r][y][x] != Palette::Black) {
+					//ミノの一番下を考慮し画面下を超えないよう補正
 					py = 5 - y;
 					flag = true;
 				}
 			}
 		}
 
-		
-		if (hit(fx, fy, r, t) == true && hitXY(t, r)==false) {
+		//衝突判定
+		if (hit(r, t) == true) {
 			bool hitf = false;
+			if (fx == 0) {
+				game = U"over";
+			}
+			//ミノが他ミノと衝突及び画面一番下に到達時、0.5秒の回転操作及び左右移動の猶予を与える
 			for (int y = 0; y < 5; ++y) {
 				for (int x = 0; x < 5; ++x) {
 					if (mino[t][r][y][x] != Palette::Black && release >= 0.5s) {
@@ -494,17 +504,18 @@ public:
 					}
 				}
 			}
+			//次のミノを呼び出す
 			if (hitf == true) {
 				release.reset();
 				t = reset_mino();
 			}
 		}
+		//Sか↓キーで急下降
 		if (release<=0s && (KeyS.pressed() || KeyDown.pressed())) {
 			++fy;
-			if (hit(fx, fy, r, t) == true) {
-
-			}
+			hit(r, t);
 		}
+		//時間ごとのミノの下降
 		if (time >= 0.5s && release <= 0s) {
 			++fy;
 			time.reset();
@@ -514,16 +525,20 @@ public:
 		Print << fx;
 		Print << fy;
 		Print << time;
-
+		Print << r;
 
 	}
+	/// @brief ミノの描画
+	/// @param[in] t ミノの形
+	/// @param[out] r ミノのアングル
 	void Draw(int t, int r) {
+		//fieldをdisplayにコピー
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				display[y][x] = field[y][x];
 			}
 		}
-
+		//ミノの落下位置のコピー
 		for (int y = 0; y < 5; ++y) {
 			for (int x = 0; x < 5; ++x) {
 				if (mino[t][r][y][x] != Palette::Black) {
@@ -532,6 +547,7 @@ public:
 			}
 		}
 		Array<Block> dsply;
+		//ブロックテクスチャの生成
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				if (display[y][x] != Palette::Black) {
@@ -539,45 +555,47 @@ public:
 				}
 			}
 		}
+		//フィールドの描画
 		for (auto& it : dsply) {
 			it.block.draw(it.color);
 		}
 
 
 	}
-
+	/// @brief　行が埋まった列を削除して下へ整列
 	void erase_block() {
-		int line_count = 0;
 		bool Islinefilled = true;
+		//fieldをチェック
 		for (int y = FIELD_HEIGHT - 1; y > 0; ) {
 			Islinefilled = true;
+			//列が埋まっていたらtrue
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				if (field[y][x] == Palette::Black) {
 					Islinefilled = false;
 				}
-				else {
-					++line_count;
-				}
 			}
 			if (Islinefilled == true) {
 				if (y > 0) {
+					//一列消して掘り下げる
 					for (int z = y; z > 0; --z) {
 						for (int x = 0; x < FIELD_WIDTH; ++x) {
 							field[z][x] = field[z - 1][x];
 						}
 					}
+					//一番上を黒で埋める
 					for (int x = 0; x < FIELD_WIDTH; ++x) {
 						field[0][x] = Palette::Black;
 					}
 				}
 			}
+			//掘り下げ処理がない場合yをデクリメント
 			else
 			{
 				--y;
 			}
 		}
 	}
-
+	//ランダムにミノの形のインデックスを返す
 	int rand_t() {
 		return Random((TYPE_I, (TYPE_MAX - 1)));
 	}
@@ -594,16 +612,27 @@ void Main()
 	LineString debug = { Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0), Vec2(FIELD_LINE_WIDTH, FIELD_HEIGHT_0),
 		Vec2(FIELD_LINE_WIDTH, FIELD_LINE_HEIGHT), Vec2(FIELD_WIDTH_0, FIELD_LINE_HEIGHT),
 		Vec2(FIELD_WIDTH_0, FIELD_HEIGHT_0) };
+	Start start;
+	Over over;
 	Blocks block;
 	int r = 0, t = block.rand_t();
-	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No }, cd{StartImmediately::No};
+	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No };
+	String game = U"start";
 	while (System::Update())
 	{
-		time.start();
-		block.move(r, t, time, release, cd);
-		block.Draw(t, r);
-		block.erase_block();
-		debug.draw();
+		if (game == U"start") {
+			start.View();
+			if (KeyF.pressed()) {
+				game = U"game";
+			}
+		}
+		if (game == U"game") {
+			time.start();
+			block.move(r, t, time, release, game);
+			block.Draw(t, r);
+			block.erase_block();
+			debug.draw();
+		}
 	}
 }
 
