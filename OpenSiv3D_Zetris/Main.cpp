@@ -366,17 +366,17 @@ public:
 			for (int y = 0; y < MINO_HEIGHT && flag != true; ++y) {
 				if (mino[t][r][y][x] != Palette::Black) {
 					tx1 = x;
-					flag = true;	//見つかったらtrue
+					flag = true;	// 見つけたらループを抜ける
 				}
 			}
 		}
 		flag = false;
 		//ミノの右端を調べる
 		for (int x = MINO_WIDTH - 1; x >= 0 && flag != true; --x) {
-			for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int y = MINO_HEIGHT - 1; y >= 0 && flag != true; --y) {
 				if (mino[t][r][y][x] != Palette::Black) {
 					tx2 = x;
-					flag = true;	//見つかったらtrue
+					flag = true;	 //見つけたらループを抜ける
 				}
 			}
 		}
