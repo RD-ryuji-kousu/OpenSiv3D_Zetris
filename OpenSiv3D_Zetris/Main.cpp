@@ -310,11 +310,11 @@ private:
 
 	Vec2 bpos{0, 0};
 	//fx 落下物のX,　fy　落下物のY, px1 左端の空白埋め, px2 右端の空白埋め, py 下の空白埋め 
-	int fx, fy, px1, px2, py;
+	int fx, fy, px1, px2, py1, py2, pyu;
 
 public:
 	/// @brief コンストラクタ及びfield,displayの初期化
-	Blocks() : fx(5), fy(0), px1(0), px2(0), py(0){
+	Blocks() : fx(5), fy(0), px1(0), px2(0), py1(0), py2(0), pyu(0){
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				field[y][x] = Palette::Black;
@@ -322,13 +322,7 @@ public:
 			}
 		}
 	}
-	/// @brief ミノの初期位置を設定しランダムに形を設定
-	/// @return ミノの形をランダムに返す
-	int reset_mino() {
-		fx = 5;
-		fy = 0;
-		return Random((TYPE_I, (TYPE_MAX - 1)));
-	}
+
 	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
 	/// @param[in] r ミノのアングル
 	/// @param[in] t ミノの形
@@ -336,18 +330,18 @@ public:
 	bool hit(int r, int t) {
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
-				if (fx + x < FIELD_WIDTH && fy + y < FIELD_HEIGHT) {
-					if (mino[t][r][y][x] != Palette::Black) {
+				if (mino[t][r][y][x] != Palette::Black) {
+					if (fy + y < FIELD_HEIGHT || fy + x < FIELD_WIDTH) {
 						if (field[fy + y + 1][fx + x] != Palette::Black || y + fy == 29)
 						{
-							///yが底辺を超えたら補正する
-							if (y + fy == 29) {
-								py -= y;
+							if (y + fy >= FIELD_HEIGHT) {
+								fy = (FIELD_HEIGHT - 1) - pyu; //yが底辺を超えたら補正する
 							}
 							return true;
 						}
 					}
 				}
+				
 			}
 		}
 		return false;
@@ -382,6 +376,43 @@ public:
 		}
 	}
 
+	/// @brief ミノの上端、下端を調べる
+	/// @param[out] ty1 ミノの上端
+	/// @param[out] ty2 ミノの下端
+	/// @param[in] t ミノの形
+	/// @param[in] r ミノのアングル
+	void ret_py(int& ty1, int& ty2, int t, int r) {
+		bool flag = false;
+		for (int y = 0; y < MINO_HEIGHT && flag != true; ++y) {
+			for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
+				if (mino[t][r][y][x] != Palette::Black) {
+					ty1 = y;
+					flag = true;
+				}
+			}
+		}
+		flag = false;
+		for (int y = MINO_HEIGHT - 1, count = 0; y >= 0 && flag != true; --y, ++count) {
+			for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
+				if (mino[t][r][y][x] != Palette::Black) {
+					ty2 = y;
+					pyu = count;
+					flag = true;
+				}
+			}
+		}
+	}
+
+	/// @brief ミノの初期位置を設定しランダムに形を設定
+	/// @return ミノの形をランダムに返す
+	int reset_mino() {
+		int t = Random((TYPE_I, (TYPE_MAX - 1))), ty1 = 0, ty2 = 0;
+		ret_py(ty1, ty2, t, 0);
+		fx = 5;
+		fy = 0 - ty1;
+		return t;
+	}
+
 	/// @brief ミノの動き及び、処理
 	/// @param[in, out] r ミノのアングル
 	/// @param[in, out] t ミノの形
@@ -403,7 +434,21 @@ public:
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
 			}
-			++r;
+			bool rflag = false;
+			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
+				if (fx + px1 - 1 >= 0 && field[fy + y][fx + px1 - 1] != Palette::Black) {
+					rflag = true;
+				}
+			}
+			rflag = false;
+			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
+				if (fx + px2 + 1 < FIELD_WIDTH && field[fy + y][fx + px2 + 1] != Palette::Black) {
+					rflag = true;
+				}
+			}
+			if (rflag == false) {
+				++r;
+			}
 			//rは常に0～3
 			if (r > 3) {
 				r = 0;
@@ -419,18 +464,32 @@ public:
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
 			}
-			--r;
+			bool rflag = false;
+			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
+				if (fx + px1 - 1 >= 0 && field[fy + y][fx + px1 - 1] != Palette::Black) {
+					rflag = true;
+				}
+			}
+			rflag = false;
+			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
+				if (fx + px2 + 1 < FIELD_WIDTH && field[fy + y][fx + px2 + 1] != Palette::Black) {
+					rflag = true;
+				}
+			}
+			if (rflag == false) {
+				--r;
+			}
 			if (r < 0) {
 				r = 3;
 			}
 		}
 
-		
+
 		//Aか←キーで左移動
 		if (KeyA.down() || KeyLeft.down()) {
 			bool flag_fx = true;
 			//移動先に移動済みの石があるかチェック
-			for (int x = 0; x < MINO_WIDTH&&flag_fx != false; ++x) {
+			for (int x = 0; x < MINO_WIDTH && flag_fx != false; ++x) {
 				for (int y = MINO_HEIGHT - 1; y >= 0 && flag_fx != false; --y) {
 					if (field[fy + y][fx + x - 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
 						flag_fx = false;
@@ -473,24 +532,16 @@ public:
 
 
 		}
-		
-		bool flag = false;
-		//ミノの一番下をチェック
-		for (int y = MINO_HEIGHT - 1; y >= 0 && flag != true; --y) {
-			for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
-				if (mino[t][r][y][x] != Palette::Black) {
-					//ミノの一番下を考慮し画面下を超えないよう補正
-					py = 5 - y;
-					flag = true;
-				}
-			}
-		}
+
+		ret_py(py1, py2, t, r);
 
 		//衝突判定
 		if (hit(r, t) == true) {
 			bool hitf = false;
-			if (fx == 0) {
-				game = U"over";
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				if (field[0][x] != Palette::Black) {
+					game = U"over";
+				}
 			}
 			//ミノが他ミノと衝突及び画面一番下に到達時、0.5秒の回転操作及び左右移動の猶予を与える
 			for (int y = 0; y < 5; ++y) {
@@ -511,7 +562,7 @@ public:
 			}
 		}
 		//Sか↓キーで急下降
-		if (release<=0s && (KeyS.pressed() || KeyDown.pressed())) {
+		if (release <= 0s && (KeyS.pressed() || KeyDown.pressed()) && fy + py2 + 1 < FIELD_HEIGHT) {
 			++fy;
 			hit(r, t);
 		}
@@ -520,8 +571,8 @@ public:
 			++fy;
 			time.reset();
 		}
-		
-		
+
+
 		Print << fx;
 		Print << fy;
 		Print << time;
@@ -563,7 +614,7 @@ public:
 
 	}
 	/// @brief　行が埋まった列を削除して下へ整列
-	void erase_block() {
+	void erase_block(int& score) {
 		bool Islinefilled = true;
 		//fieldをチェック
 		for (int y = FIELD_HEIGHT - 1; y > 0; ) {
@@ -586,6 +637,7 @@ public:
 					for (int x = 0; x < FIELD_WIDTH; ++x) {
 						field[0][x] = Palette::Black;
 					}
+					score += 1000;
 				}
 			}
 			//掘り下げ処理がない場合yをデクリメント
@@ -597,9 +649,19 @@ public:
 	}
 	//ランダムにミノの形のインデックスを返す
 	int rand_t() {
-		return Random((TYPE_I, (TYPE_MAX - 1)));
+		int t =  Random((TYPE_I, (TYPE_MAX - 1))), ty1 = 0, ty2 = 0;
+		ret_py(ty1, ty2, t, 0);
+		fy = -ty1;
+		return t;
 	}
-
+	void reset() {
+		for (int y = 0; y < FIELD_HEIGHT; ++y) {
+			for (int x = 0; x < FIELD_WIDTH; ++x) {
+				field[y][x] = Palette::Black;
+				display[y][x] = Palette::Black;
+			}
+		}
+	}
 };
 
 
@@ -615,9 +677,10 @@ void Main()
 	Start start;
 	Over over;
 	Blocks block;
-	int r = 0, t = block.rand_t();
+	int r = 0, t = block.rand_t(), score = 0;
 	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No };
 	String game = U"start";
+	Font font{ 40 };
 	while (System::Update())
 	{
 		if (game == U"start") {
@@ -630,8 +693,22 @@ void Main()
 			time.start();
 			block.move(r, t, time, release, game);
 			block.Draw(t, r);
-			block.erase_block();
+			block.erase_block(score);
+			font(U"Score", score).draw();
 			debug.draw();
+		}
+		if (game == U"over") {
+			over.View();
+			if (KeyR.pressed()) {
+				block.reset();
+				r = 0;
+				t = block.rand_t();
+				score = 0;
+				game = U"game";
+			}
+			if (KeyQ.pressed()) {
+				System::Exit();
+			}
 		}
 	}
 }
