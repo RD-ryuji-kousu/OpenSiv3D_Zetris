@@ -331,15 +331,19 @@ public:
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
 				if (mino[t][r][y][x] != Palette::Black) {
-					if (fy + y < FIELD_HEIGHT || fy + x < FIELD_WIDTH) {
-						if (field[fy + y + 1][fx + x] != Palette::Black || y + fy == 29)
-						{
-							if (y + fy >= FIELD_HEIGHT) {
-								fy = (FIELD_HEIGHT - 1) - pyu; //yが底辺を超えたら補正する
-							}
-							return true;
-						}
+					
+					if (field[fy + y][fx + x] != Palette::Black) {
+						fy -= 1;
 					}
+					if (field[fy + y + 1][fx + x] != Palette::Black || y + fy == 29)
+					{
+						if (y + fy >= FIELD_HEIGHT) {
+							fy = (FIELD_HEIGHT - 1) - pyu; //yが底辺を超えたら補正する
+						}
+						return true;
+					}
+						
+
 				}
 				
 			}
