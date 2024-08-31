@@ -331,15 +331,19 @@ public:
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
 				if (mino[t][r][y][x] != Palette::Black) {
-					if (fy + y < FIELD_HEIGHT || fy + x < FIELD_WIDTH) {
-						if (field[fy + y + 1][fx + x] != Palette::Black || y + fy == 29)
-						{
-							if (y + fy >= FIELD_HEIGHT) {
-								fy = (FIELD_HEIGHT - 1) - pyu; //yが底辺を超えたら補正する
-							}
-							return true;
-						}
+					
+					if (field[fy + y][fx + x] != Palette::Black) {
+						fy -= 1;
 					}
+					if (field[fy + y + 1][fx + x] != Palette::Black || y + fy >= FIELD_HEIGHT - 1)
+					{
+						if (y + fy >= FIELD_HEIGHT) {
+							fy = (FIELD_HEIGHT - 1) - pyu; //yが底辺を超えたら補正する
+						}
+						return true;
+					}
+						
+
 				}
 				
 			}
@@ -544,8 +548,8 @@ public:
 				}
 			}
 			//ミノが他ミノと衝突及び画面一番下に到達時、0.5秒の回転操作及び左右移動の猶予を与える
-			for (int y = 0; y < 5; ++y) {
-				for (int x = 0; x < 5; ++x) {
+			for (int y = 0; y < MINO_HEIGHT; ++y) {
+				for (int x = 0; x < MINO_WIDTH; ++x) {
 					if (mino[t][r][y][x] != Palette::Black && release >= 0.5s) {
 						field[fy + y][fx + x] = mino[t][r][y][x];
 						hitf = true;
