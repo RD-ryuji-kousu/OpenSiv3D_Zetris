@@ -353,6 +353,41 @@ public:
 		}
 	}
 
+	/*
+	minoをフィールド(fx,fy)に配置できるかを判定する。
+	@param[in] fx, fy フィールド上のminoの左上の座標
+	@param[in]t, rミノの形とアングル
+	@return 各領域との交差判定を返す。
+				  bit0  minoの中身がフィールドの左側にはみ出していたら1
+				  bit1  minoの中身がフィールドの上側にはみ出していたら1
+				  bit2  minoの中身がフィールドの右側にはみ出していたら1
+				  bit3  minoの中身がフィールドの下側にはみ出していたら1
+	@note この関数では、フィールドに配置された物体との衝突は見ない。
+　　　　フィールドからはみ出しているか否かのみを判定する。
+	*/
+	int determine_field_boundary(int t, int r) const {
+		int bit0 = 0, bit1 = 0, bit2 = 0, bit3 = 0;
+		int x0, x1, y0, y1;
+		get_contents(t, r, x0, x1, y0, y1);
+		if (fx + x0 < 0) {
+			bit0 = 1;
+			return bit0;
+		}
+		if (fy + y0 < 0) {
+			bit1 = 1;
+			return bit1;
+		}
+		if (fx + x1 >= FIELD_WIDTH) {
+			bit2 = 1;
+			return bit2;
+		}
+		if (fy + y1 > FIELD_HEIGHT) {
+			bit3 = 1;
+			return bit3;
+		}
+		return 0;
+	}
+
 	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
 	/// @param[in] r ミノのアングル
 	/// @param[in] t ミノの形
