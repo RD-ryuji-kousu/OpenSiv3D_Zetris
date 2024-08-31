@@ -331,6 +331,8 @@ public:
 	@param[out]  y1  下端の位置(0～4)を得る
 */
 	void get_contents(int t, int r, int& x0, int& y0, int& x1, int& y1) const {
+		x0 = MINO_WIDTH, y0 = MINO_HEIGHT;
+		x1 = -1, y1 = -1;
 		for (int y = 0; y < MINO_HEIGHT; ++y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
 				if (mino[t][r][y][x] != Palette::Black) {
