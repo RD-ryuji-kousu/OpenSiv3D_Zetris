@@ -323,6 +323,32 @@ public:
 		}
 	}
 
+	/*
+	minoの空白ではない、中身のある部分を得る。
+	@param[out]  x0  左端の位置(0～4)を得る
+	@param[out]  y0  上端の位置(0～4)を得る
+	@param[out]  x1  右端の位置(0～4)を得る
+	@param[out]  y1  下端の位置(0～4)を得る
+*/
+	void get_contents(int& x0, int& y0, int& x1, int& y1) const {
+		for (int y = 0; y < MINO_HEIGHT; ++y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				if (x0 < x) {
+					x0 = x;
+				}
+				if (y0 < y) {
+					y0 = y;
+				}
+				if (x1 > x) {
+					x1 = x;
+				}
+				if (y1 > y) {
+					y1 = y;
+				}
+			}
+		}
+	}
+
 	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
 	/// @param[in] r ミノのアングル
 	/// @param[in] t ミノの形
