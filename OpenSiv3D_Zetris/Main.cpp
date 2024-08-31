@@ -366,26 +366,22 @@ public:
 　　　　フィールドからはみ出しているか否かのみを判定する。
 	*/
 	int determine_field_boundary(int t, int r) const {
-		int bit0 = 0, bit1 = 0, bit2 = 0, bit3 = 0;
+		int ret_val = 0;
 		int x0, x1, y0, y1;
 		get_contents(t, r, x0, x1, y0, y1);
 		if (fx + x0 < 0) {
-			bit0 = 1;
-			return bit0;
+			ret_val |= (1 << 0);
 		}
 		if (fy + y0 < 0) {
-			bit1 = 1;
-			return bit1;
+			ret_val |= (1 << 1);
 		}
 		if (fx + x1 >= FIELD_WIDTH) {
-			bit2 = 1;
-			return bit2;
+			ret_val |= (1 << 2);
 		}
 		if (fy + y1 > FIELD_HEIGHT) {
-			bit3 = 1;
-			return bit3;
+			ret_val |= (1 << 3);
 		}
-		return 0;
+		return ret_val;
 	}
 
 	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
