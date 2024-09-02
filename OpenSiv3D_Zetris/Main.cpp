@@ -365,20 +365,20 @@ public:
 	@note この関数では、フィールドに配置された物体との衝突は見ない。
 　　　　フィールドからはみ出しているか否かのみを判定する。
 	*/
-	int determine_field_boundary(int t, int r) const {
+	int determine_field_boundary(int t, int r, int tx , int ty) const {
 		int ret_val = 0;
 		int x0, x1, y0, y1;
 		get_contents(t, r, x0, x1, y0, y1);
-		if (fx + x0 < 0) {
+		if (tx + x0 <= 0) {
 			ret_val |= (1 << 0);
 		}
-		if (fy + y0 < 0) {
+		if (ty <= 0 + y0) {
 			ret_val |= (1 << 1);
 		}
-		if (fx + x1 >= FIELD_WIDTH) {
+		if (tx + x1 - x0 > FIELD_WIDTH) {
 			ret_val |= (1 << 2);
 		}
-		if (fy + y1 > FIELD_HEIGHT) {
+		if (ty + y1 >= FIELD_HEIGHT) {
 			ret_val |= (1 << 3);
 		}
 		return ret_val;
@@ -499,19 +499,7 @@ public:
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
 			}
-			bool rflag = false;
-			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
-				if (fx + px1 - 1 >= 0 && field[fy + y][fx + px1 - 1] != Palette::Black) {
-					rflag = true;
-				}
-			}
-			rflag = false;
-			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
-				if (fx + px2 + 1 < FIELD_WIDTH && field[fy + y][fx + px2 + 1] != Palette::Black) {
-					rflag = true;
-				}
-			}
-			if (rflag == false) {
+			if (determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy) == 0) {
 				++r;
 			}
 			//rは常に0～3
@@ -529,19 +517,7 @@ public:
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
 			}
-			bool rflag = false;
-			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
-				if (fx + px1 - 1 >= 0 && field[fy + y][fx + px1 - 1] != Palette::Black) {
-					rflag = true;
-				}
-			}
-			rflag = false;
-			for (int y = MINO_HEIGHT - 1; y >= 0 && rflag == false; --y) {
-				if (fx + px2 + 1 < FIELD_WIDTH && field[fy + y][fx + px2 + 1] != Palette::Black) {
-					rflag = true;
-				}
-			}
-			if (rflag == false) {
+			if (determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy) == 0) {
 				--r;
 			}
 			if (r < 0) {
@@ -549,23 +525,11 @@ public:
 			}
 		}
 
-
+		
 		//Aか←キーで左移動
-		if (KeyA.down() || KeyLeft.down()) {
-			bool flag_fx = true;
-			//移動先に移動済みの石があるかチェック
-			for (int x = 0; x < MINO_WIDTH && flag_fx != false; ++x) {
-				for (int y = MINO_HEIGHT - 1; y >= 0 && flag_fx != false; --y) {
-					if (field[fy + y][fx + x - 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
-						flag_fx = false;
-					}
-					else {
-						flag_fx = true;
-					}
-				}
-			}
+		if (KeyA.down() || KeyLeft.down()) {		
 			//移動先に石がなければ移動
-			if (flag_fx == true) {
+			if (determine_field_boundary(r, t, fx - 1, fy) != (1 << 0)) {
 				--fx;
 			}
 			//ミノの左端を考慮した上で画面左端を超えないよう補正
@@ -576,19 +540,8 @@ public:
 
 		}
 		//Dか→キーで右移動
-		if (KeyD.down() || KeyRight.down()) {
-			bool flag_fx = true;
-			for (int x = MINO_WIDTH - 1; x >= 0 && flag_fx != false; --x) {
-				for (int y = MINO_HEIGHT - 1; y >= 0 && flag_fx != false; --y) {
-					if (field[fy + y][fx + x + 1] != Palette::Black && mino[t][r][y][x] != Palette::Black) {
-						flag_fx = false;
-					}
-					else {
-						flag_fx = true;
-					}
-				}
-			}
-			if (flag_fx == true) {
+		if (KeyD.down() || KeyRight.down()) {			
+			if (determine_field_boundary(t, r, fx + 1, fy) != (1 << 2)) {
 				++fx;
 			}
 			if (fx >= FIELD_WIDTH - px2) {
@@ -627,7 +580,8 @@ public:
 			}
 		}
 		//Sか↓キーで急下降
-		if (release <= 0s && (KeyS.pressed() || KeyDown.pressed()) && fy + py2 + 1 < FIELD_HEIGHT) {
+		if (release <= 0s && (KeyS.pressed() || KeyDown.pressed()) && determine_field_boundary(t, r, fx, fy + 1) < (1 << 3)
+			&& fy + py2 + 1 < FIELD_HEIGHT) {
 			++fy;
 			hit(r, t);
 		}
@@ -638,11 +592,7 @@ public:
 		}
 
 
-		Print << fx;
-		Print << fy;
-		Print << time;
-		Print << r;
-
+	
 	}
 	/// @brief ミノの描画
 	/// @param[in] t ミノの形
