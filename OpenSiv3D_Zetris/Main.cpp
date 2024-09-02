@@ -541,7 +541,7 @@ public:
 		}
 		//Dか→キーで右移動
 		if (KeyD.down() || KeyRight.down()) {			
-			if (determine_field_boundary(t, r, fx - 1, fy) != (1 << 2)) {
+			if (determine_field_boundary(t, r, fx + 1, fy) != (1 << 2)) {
 				++fx;
 			}
 			if (fx >= FIELD_WIDTH - px2) {
