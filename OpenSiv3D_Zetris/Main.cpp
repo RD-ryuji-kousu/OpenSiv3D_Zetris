@@ -311,10 +311,10 @@ private:
 	Vec2 bpos{0, 0};
 	//fx 落下物のX,　fy　落下物のY, px1 左端の空白埋め, px2 右端の空白埋め, py 下の空白埋め 
 	int fx, fy, px1, px2, py1, py2, pyu;
-
+	bool put_flag;
 public:
 	/// @brief コンストラクタ及びfield,displayの初期化
-	Blocks() : fx(5), fy(0), px1(0), px2(0), py1(0), py2(0), pyu(0){
+	Blocks() : fx(5), fy(0), px1(0), px2(0), py1(0), py2(0), pyu(0), put_flag(false){
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
 				field[y][x] = Palette::Black;
@@ -323,29 +323,39 @@ public:
 		}
 	}
 
+	/// @brief ミノの初期位置を設定しランダムに形を設定
+	/// @return ミノの形をランダムに返す
+	int reset_mino() {
+		int t = Random((TYPE_I, (TYPE_MAX - 1))), ty1 = 0, ty2 = 0;
+		ret_py(ty1, ty2, t, 0);
+		fx = 5;
+		fy = 0 - ty1;
+		return t;
+	}
+
 	/*
 	minoの空白ではない、中身のある部分を得る。
 	@param[out]  x0  左端の位置(0～4)を得る
 	@param[out]  y0  上端の位置(0～4)を得る
 	@param[out]  x1  右端の位置(0～4)を得る
 	@param[out]  y1  下端の位置(0～4)を得る
-*/
+	*/
 	void get_contents(int t, int r, int& x0, int& y0, int& x1, int& y1) const {
 		x0 = MINO_WIDTH, y0 = MINO_HEIGHT;
 		x1 = -1, y1 = -1;
 		for (int y = 0; y < MINO_HEIGHT; ++y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
 				if (mino[t][r][y][x] != Palette::Black) {
-					if (x0 < x) {
+					if (x0 > x) {
 						x0 = x;
 					}
-					if (y0 < y) {
+					if (y0 > y) {
 						y0 = y;
 					}
-					if (x1 > x) {
+					if (x1 < x) {
 						x1 = x;
 					}
-					if (y1 > y) {
+					if (y1 < y) {
 						y1 = y;
 					}
 				}
@@ -368,20 +378,57 @@ public:
 	int determine_field_boundary(int t, int r, int tx , int ty) const {
 		int ret_val = 0;
 		int x0, x1, y0, y1;
-		get_contents(t, r, x0, x1, y0, y1);
-		if (tx + x0 <= 0) {
+		get_contents(t, r, x0, y0, x1, y1);
+		if (tx + x0 < 0) {
 			ret_val |= (1 << 0);
 		}
-		if (ty <= 0 + y0) {
+		if (ty + y0 < 0) {
 			ret_val |= (1 << 1);
 		}
-		if (tx + x1 - x0 > FIELD_WIDTH) {
+		if (tx + x1 >= FIELD_WIDTH) {
 			ret_val |= (1 << 2);
 		}
 		if (ty + y1 >= FIELD_HEIGHT) {
 			ret_val |= (1 << 3);
 		}
 		return ret_val;
+	}
+
+	bool is_collision_field(int tx, int ty, int t, int r)const {
+		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				if (mino[t][r][y][x] != Palette::Black && field[ty + y][tx + x] != Palette::Black) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	void put_mino(int& t, int r, int tx, int ty, Stopwatch& release, String& game) {
+		bool hitf = false;
+		for (int x = 0; x < FIELD_WIDTH; ++x) {
+			if (field[0][x] != Palette::Black) {
+				game = U"over";
+			}
+		}
+		for (int y = 0; y < MINO_HEIGHT; ++y) {
+			for (int x = 0; x < MINO_WIDTH; ++x) {
+				if (mino[t][r][y][x] != Palette::Black && release >= 0.5s) {
+					field[ty + y][tx + x] = mino[t][r][y][x];
+					hitf = true;
+				}
+				else if (mino[t][r][y][x] != Palette::Black && release <= 0s) {
+					release.start();
+				}
+			}
+		}
+		//次のミノを呼び出す
+		if (hitf == true) {
+			release.reset();
+			t = reset_mino();
+			put_flag = false;
+		}
 	}
 
 	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
@@ -468,15 +515,7 @@ public:
 		}
 	}
 
-	/// @brief ミノの初期位置を設定しランダムに形を設定
-	/// @return ミノの形をランダムに返す
-	int reset_mino() {
-		int t = Random((TYPE_I, (TYPE_MAX - 1))), ty1 = 0, ty2 = 0;
-		ret_py(ty1, ty2, t, 0);
-		fx = 5;
-		fy = 0 - ty1;
-		return t;
-	}
+
 
 	/// @brief ミノの動き及び、処理
 	/// @param[in, out] r ミノのアングル
@@ -485,21 +524,23 @@ public:
 	/// @param[in, out] release ミノのがぶつかってから操作出来る時間の管理
 	/// @param[in, out] game ゲームのステート
 	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, String& game) {
-
+		
 		ret_px(px1, px2, t, r);
 		//Zを押したときアングルを90°正回転
 		if (KeyZ.down()) {
 			//回転後の左端x1,右端x2
-			int x1 = 0, x2 = 0;
-			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);
+			/*int x1 = 0, x2 = 0;
+			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);*/
 			//回転後端を超えてしまう場合補正
+			/*
 			if (fx < 0 - x1) {
 				fx = 0 - x1;
 			}
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
-			}
-			if (determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy) == 0) {
+			}*/
+			if (determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy) == 0 &&
+				is_collision_field(fx, fy, t, (r + 1 > 4) ? 0 : r + 1) == false) {
 				++r;
 			}
 			//rは常に0～3
@@ -509,6 +550,7 @@ public:
 		}
 		//Xを押したとき90°逆回転
 		if (KeyX.down()) {
+			/*
 			int x1 = 0, x2 = 0;
 			ret_px(x1, x2, t, (r - 1 < 0) ? 3 : r - 1);
 			if (fx < 0 - x1) {
@@ -516,8 +558,10 @@ public:
 			}
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
-			}
-			if (determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy) == 0) {
+			}*/
+
+			if (determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy) == 0 &&
+				is_collision_field(fx, fy, t, (r - 1 < 0) ? 3 : r - 1) == false) {
 				--r;
 			}
 			if (r < 0) {
@@ -529,7 +573,8 @@ public:
 		//Aか←キーで左移動
 		if (KeyA.down() || KeyLeft.down()) {		
 			//移動先に石がなければ移動
-			if (determine_field_boundary(r, t, fx - 1, fy) != (1 << 0)) {
+			if (determine_field_boundary(t, r, fx - 1, fy) ==  0 &&
+				is_collision_field(fx - 1, fy, t, r) == false) {
 				--fx;
 			}
 			//ミノの左端を考慮した上で画面左端を超えないよう補正
@@ -541,7 +586,8 @@ public:
 		}
 		//Dか→キーで右移動
 		if (KeyD.down() || KeyRight.down()) {			
-			if (determine_field_boundary(t, r, fx + 1, fy) != (1 << 2)) {
+			if (determine_field_boundary(t, r, fx + 1, fy) == 0 &&
+				is_collision_field(fx + 1, fy, t, r) == false) {
 				++fx;
 			}
 			if (fx >= FIELD_WIDTH - px2) {
@@ -551,6 +597,7 @@ public:
 
 		}
 
+		/*
 		ret_py(py1, py2, t, r);
 
 		//衝突判定
@@ -579,19 +626,35 @@ public:
 				t = reset_mino();
 			}
 		}
-		//Sか↓キーで急下降
-		if (release <= 0s && (KeyS.pressed() || KeyDown.pressed()) && determine_field_boundary(t, r, fx, fy + 1) < (1 << 3)
-			&& fy + py2 + 1 < FIELD_HEIGHT) {
-			++fy;
-			hit(r, t);
-		}
+		*/
 		//時間ごとのミノの下降
 		if (time >= 0.5s && release <= 0s) {
-			++fy;
-			time.reset();
+			if (determine_field_boundary(t, r, fx, fy + 1) == 0 &&
+				is_collision_field(fx, fy + 1, t, r) == false) { 
+				++fy;
+				time.reset();
+			}
+			else {
+				put_flag = true;
+			}
 		}
 
-
+		//Sか↓キーで急下降
+		if (release <= 0s && (KeyS.pressed() || KeyDown.pressed())) {
+			if (determine_field_boundary(t, r, fx, fy + 1) == 0 &&
+				is_collision_field(fx, fy + 1, t, r) == false) {
+				++fy;
+			}
+			else {
+				put_flag = true;
+			}
+		}
+		
+		if (put_flag == true) {
+			put_mino(t, r, fx, fy, release, game);
+			
+		}
+		
 	
 	}
 	/// @brief ミノの描画
