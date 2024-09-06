@@ -555,7 +555,7 @@ public:
 			else if (d != 0 &&
 				is_collision_field(fx, fy, t, r1(r)) == false) {
 				int tx = fx, ty = fy;
-				while ((d= determine_field_boundary(t, r1(r), fx, fy)) != 0) {
+				while ((d= determine_field_boundary(t, r1(r), tx, ty)) != 0) {
 					
 					if ((d & (1 << 0)) != 0) {
 						++tx;
@@ -600,7 +600,7 @@ public:
 			}
 			else if (d != 0 && is_collision_field(fx, fy, t, r2(r)) == false) {
 				int tx = fx, ty = fy;
-				while ((d = determine_field_boundary(t, r2(r), fx, fy)) != 0) {
+				while ((d = determine_field_boundary(t, r2(r), tx, ty)) != 0) {
 					if ((d & (1 << 0)) != 0) {
 						++tx;
 					}
