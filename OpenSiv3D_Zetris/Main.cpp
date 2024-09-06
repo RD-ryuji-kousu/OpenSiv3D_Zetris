@@ -12,6 +12,12 @@ const int FIELD_LINE_HEIGHT = 560;
 const int FIELD_WIDTH_0 = 380;
 const int FIELD_HEIGHT_0 = 20;
 
+inline int r1(int r) {
+	return (r + 1 > 4) ? 0 : r + 1;
+}
+inline int r2(int r) {
+	return (r - 1 < 0) ? 3 : r - 1;
+}
 
 //ミノの形管理index用
 enum minotype {
@@ -530,7 +536,7 @@ public:
 		ret_px(px1, px2, t, r);
 		//Zを押したときアングルを90°正回転
 		if (KeyZ.down()) {
-			int d = determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy);
+			int d = determine_field_boundary(t, r1(r), fx, fy);
 			//回転後の左端x1,右端x2
 			/*int x1 = 0, x2 = 0;
 			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);*/
@@ -543,26 +549,32 @@ public:
 				fx = FIELD_WIDTH - 1 - x2;
 			}*/
 			if (d == 0 &&
-				is_collision_field(fx, fy, t, (r + 1 > 4) ? 0 : r + 1) == false) {
+				is_collision_field(fx, fy, t, r1(r)) == false) {
 				++r;
 			}
 			else if (d != 0 &&
-				is_collision_field(fx, fy, t, (r + 1 > 4) ? 0 : r + 1) == false) {
-				while ((d= determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy)) != 0) {
+				is_collision_field(fx, fy, t, r1(r)) == false) {
+				int tx = fx, ty = fy;
+				while ((d= determine_field_boundary(t, r1(r), fx, fy)) != 0) {
+					
 					if ((d & (1 << 0)) != 0) {
-						++fx;
+						++tx;
 					}
 					if ((d & (1 << 1)) != 0) {
-						++fy;
+						++ty;
 					}
 					if ((d & (1 << 2)) != 0) {
-						--fx;
+						--tx;
 					}
 					if ((d & (1 << 3)) != 0) {
-						--fy;
+						--ty;
 					}
 				}
-				++r;
+				if (is_collision_field(tx, ty, t, r1(r)) == false) {
+					fx = tx;
+					fy = ty;
+					++r;
+				}
 			}
 			//rは常に0～3
 			if (r > 3) {
@@ -581,27 +593,32 @@ public:
 				fx = FIELD_WIDTH - 1 - x2;
 			}*/
 
-			int d = determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy);
+			int d = determine_field_boundary(t, r2(r), fx, fy);
 			if (d == 0 &&
-				is_collision_field(fx, fy, t, (r - 1 < 0) ? 3 : r - 1) == false) {
+				is_collision_field(fx, fy, t, r2(r)) == false) {
 				--r;
 			}
-			else if (d != 0 && is_collision_field(fx, fy, t, (r - 1 < 0) ? 3 : r - 1) == false) {
-				while ((d = determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy)) != 0) {
+			else if (d != 0 && is_collision_field(fx, fy, t, r2(r)) == false) {
+				int tx = fx, ty = fy;
+				while ((d = determine_field_boundary(t, r2(r), fx, fy)) != 0) {
 					if ((d & (1 << 0)) != 0) {
-						++fx;
+						++tx;
 					}
 					if ((d & (1 << 1)) != 0) {
-						++fy;
+						++ty;
 					}
 					if ((d & (1 << 2)) != 0) {
-						--fx;
+						--tx;
 					}
 					if ((d & (1 << 3)) != 0) {
-						--fy;
+						--ty;
 					}
 				}
-
+				if (is_collision_field(tx, ty, t, r2(r)) == false) {
+					fx = tx;
+					fy = ty;
+					++r;
+				}
 			}
 			if (r < 0) {
 				r = 3;
