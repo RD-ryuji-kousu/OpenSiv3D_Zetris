@@ -12,6 +12,12 @@ const int FIELD_LINE_HEIGHT = 560;
 const int FIELD_WIDTH_0 = 380;
 const int FIELD_HEIGHT_0 = 20;
 
+inline int r1(int r) {
+	return (r + 1 > 4) ? 0 : r + 1;
+}
+inline int r2(int r) {
+	return (r - 1 < 0) ? 3 : r - 1;
+}
 
 //ミノの形管理index用
 enum minotype {
@@ -394,6 +400,8 @@ public:
 		return ret_val;
 	}
 
+
+
 	bool is_collision_field(int tx, int ty, int t, int r)const {
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
@@ -528,6 +536,7 @@ public:
 		ret_px(px1, px2, t, r);
 		//Zを押したときアングルを90°正回転
 		if (KeyZ.down()) {
+			int d = determine_field_boundary(t, r1(r), fx, fy);
 			//回転後の左端x1,右端x2
 			/*int x1 = 0, x2 = 0;
 			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);*/
@@ -539,9 +548,33 @@ public:
 			else if (fx >= FIELD_WIDTH - x2) {
 				fx = FIELD_WIDTH - 1 - x2;
 			}*/
-			if (determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy) == 0 &&
-				is_collision_field(fx, fy, t, (r + 1 > 4) ? 0 : r + 1) == false) {
+			if (d == 0 &&
+				is_collision_field(fx, fy, t, r1(r)) == false) {
 				++r;
+			}
+			else if (d != 0 &&
+				is_collision_field(fx, fy, t, r1(r)) == false) {
+				int tx = fx, ty = fy;
+				while ((d= determine_field_boundary(t, r1(r), tx, ty)) != 0) {
+					
+					if ((d & (1 << 0)) != 0) {
+						++tx;
+					}
+					if ((d & (1 << 1)) != 0) {
+						++ty;
+					}
+					if ((d & (1 << 2)) != 0) {
+						--tx;
+					}
+					if ((d & (1 << 3)) != 0) {
+						--ty;
+					}
+				}
+				if (is_collision_field(tx, ty, t, r1(r)) == false) {
+					fx = tx;
+					fy = ty;
+					++r;
+				}
 			}
 			//rは常に0～3
 			if (r > 3) {
@@ -560,9 +593,32 @@ public:
 				fx = FIELD_WIDTH - 1 - x2;
 			}*/
 
-			if (determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy) == 0 &&
-				is_collision_field(fx, fy, t, (r - 1 < 0) ? 3 : r - 1) == false) {
+			int d = determine_field_boundary(t, r2(r), fx, fy);
+			if (d == 0 &&
+				is_collision_field(fx, fy, t, r2(r)) == false) {
 				--r;
+			}
+			else if (d != 0 && is_collision_field(fx, fy, t, r2(r)) == false) {
+				int tx = fx, ty = fy;
+				while ((d = determine_field_boundary(t, r2(r), tx, ty)) != 0) {
+					if ((d & (1 << 0)) != 0) {
+						++tx;
+					}
+					if ((d & (1 << 1)) != 0) {
+						++ty;
+					}
+					if ((d & (1 << 2)) != 0) {
+						--tx;
+					}
+					if ((d & (1 << 3)) != 0) {
+						--ty;
+					}
+				}
+				if (is_collision_field(tx, ty, t, r2(r)) == false) {
+					fx = tx;
+					fy = ty;
+					++r;
+				}
 			}
 			if (r < 0) {
 				r = 3;
@@ -576,7 +632,16 @@ public:
 			if (determine_field_boundary(t, r, fx - 1, fy) ==  0 &&
 				is_collision_field(fx - 1, fy, t, r) == false) {
 				--fx;
+				if (release > 0s) {
+					if (determine_field_boundary(t, r, fx, fy - 1) == 0 &&
+						is_collision_field(fx, fy - 1, t, r) == false) {
+						release.reset();
+						time.restart();
+					}
+				}
 			}
+
+
 			//ミノの左端を考慮した上で画面左端を超えないよう補正
 			if (fx < 0 - px1)
 			{
@@ -589,6 +654,13 @@ public:
 			if (determine_field_boundary(t, r, fx + 1, fy) == 0 &&
 				is_collision_field(fx + 1, fy, t, r) == false) {
 				++fx;
+				if (release > 0s) {
+					if (determine_field_boundary(t, r, fx, fy - 1) == 0 &&
+						is_collision_field(fx, fy - 1, t, r) == false) {
+						release.reset();
+						time.restart();
+					}
+				}
 			}
 			if (fx >= FIELD_WIDTH - px2) {
 				fx = FIELD_WIDTH - 1 - px2;
