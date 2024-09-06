@@ -394,6 +394,25 @@ public:
 		return ret_val;
 	}
 
+	std::tuple<int, int> determine_field_boundary_range(int t, int r, int tx, int ty) const {
+		int ret_x = 0, ret_y = 0;
+		int x0, x1, y0, y1;
+		get_contents(t, r, x0, y0, x1, y1);
+		if (tx + x0 < 0) {
+			ret_x = tx + x0;
+		}
+		if (ty + y0 < 0) {
+			ret_y = ty + y0;
+		}
+		if (tx + x1 >= FIELD_WIDTH) {
+			ret_x = (tx + x1) - FIELD_WIDTH + 1;
+		}
+		if (ty + y1 >= FIELD_HEIGHT) {
+			ret_y = (ty + y1) - FIELD_HEIGHT + 1;
+		}
+		return std::forward_as_tuple(ret_x, ret_y);
+	}
+
 	bool is_collision_field(int tx, int ty, int t, int r)const {
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
@@ -529,6 +548,7 @@ public:
 		//Zを押したときアングルを90°正回転
 		if (KeyZ.down()) {
 			int d = determine_field_boundary(t, (r + 1 > 4) ? 0 : r + 1, fx, fy);
+			int a, b;
 			//回転後の左端x1,右端x2
 			/*int x1 = 0, x2 = 0;
 			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);*/
@@ -546,42 +566,48 @@ public:
 			}
 			else if (d != 0 &&
 				is_collision_field(fx, fy, t, (r + 1 > 4) ? 0 : r + 1) == false) {
+				std::tie(a, b) = determine_field_boundary_range(t, (r + 1 > 4) ? 0 : r + 1, fx, fy);
+				fx -= a;
+				fy -= b;
+				++r;
+				/*
 				if (d == 1) {
-					++fx;
+					fx += a;
 					++r;
 				}
 				if (d == 2) {
-					++fy;
+					fy += b;
 					++r;
 				}
 				if (d == 3) {
-					++fx;
-					++fy;
+					fx += a;
+					fy += b;
 					++r;
 				}
 				if (d == 4) {
-					--fx;
+					fx += a;
 					++r;
 				}
 				if (d == 6) {
-					--fx;
-					++fy;
+					fx += a;
+					fy += b;
 					++r;
 				}
 				if (d == 8) {
-					--fy;
+					fy += b;
 					++r;
 				}
 				if (d == 9) {
-					++fx;
-					--fy;
+					fx += a;
+					fy += b;
 					++r;
 				}
 				if (d == 13) {
-					--fx;
-					--fy;
+					fx += a;
+					fy += b;
 					++r;
 				}
+				*/
 			}
 			//rは常に0～3
 			if (r > 3) {
@@ -601,23 +627,28 @@ public:
 			}*/
 
 			int d = determine_field_boundary(t, (r - 1 < 0) ? 3 : r - 1, fx, fy);
-
+			int a, b;
 			if (d == 0 &&
 				is_collision_field(fx, fy, t, (r - 1 < 0) ? 3 : r - 1) == false) {
 				--r;
 			}
 			else if (d != 0 && is_collision_field(fx, fy, t, (r - 1 < 0) ? 3 : r - 1) == false) {
+				std::tie(a, b) = determine_field_boundary_range(t, (r - 1 < 0) ? 3 : r - 1, fx, fy);
+				fx -= a;
+				fy -= b;
+				--r;
+				/*
 				if (d == 1) {
-					++fx;
+					fx += a;
 					--r;
 				}
 				if (d == 2) {
-					++fy;
+					fy += b;
 					--r;
 				}
 				if (d == 3) {
-					++fx;
-					++fy;
+					fx += a;
+					fy += b;
 					--r;
 				}
 				if (d == 4) {
@@ -643,6 +674,7 @@ public:
 					--fy;
 					--r;
 				}
+				*/
 			}
 			if (r < 0) {
 				r = 3;
@@ -851,7 +883,7 @@ void Main()
 	Start start;
 	Over over;
 	Blocks block;
-	int r = 0, t = block.rand_t(), score = 0;
+	int r = 0, t = TYPE_I/*block.rand_t()*/, score = 0;
 	Stopwatch time{ StartImmediately::No }, release{ StartImmediately::No };
 	String game = U"start";
 	Font font{ 40 };
