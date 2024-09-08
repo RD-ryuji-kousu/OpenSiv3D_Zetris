@@ -329,15 +329,7 @@ public:
 		}
 	}
 
-	/// @brief ミノの初期位置を設定しランダムに形を設定
-	/// @return ミノの形をランダムに返す
-	int reset_mino() {
-		int t = Random((TYPE_I, (TYPE_MAX - 1))), ty1 = 0, ty2 = 0;
-		ret_py(ty1, ty2, t, 0);
-		fx = 5;
-		fy = 0 - ty1;
-		return t;
-	}
+	
 
 	/*
 	minoの空白ではない、中身のある部分を得る。
@@ -401,7 +393,12 @@ public:
 	}
 
 
-
+	/// @brief ミノと障害物が重なっているかの判定
+	/// @param tx ミノの左上x座標
+	/// @param ty ミノの左上y座標
+	/// @param t ミノの形
+	/// @param r ミノのアングル
+	/// @return 衝突している場合true
 	bool is_collision_field(int tx, int ty, int t, int r)const {
 		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
@@ -413,19 +410,40 @@ public:
 		return false;
 	}
 
+	/// @brief ミノの初期位置を設定しランダムに形を設定
+	/// @return ミノの形をランダムに返す
+	int reset_mino() {
+		int t = Random((TYPE_I, (TYPE_MAX - 1))),
+			x0, x1, y0, y1;
+		get_contents(t, 0, x0, y0, x1, y1);
+		fx = 5;
+		fy = 0 - y0;
+		return t;
+	}
+
+
+	/// @brief ミノを盤上に障害物として登録
+	/// @param t ミノの形
+	/// @param r ミノのアングル
+	/// @param tx ミノの左上座標X
+	/// @param ty ミノの左上座標Y
+	/// @param release ミノの衝突後移動猶予
+	/// @param game ゲームステート、U"game"時ゲーム処理
 	void put_mino(int& t, int r, int tx, int ty, Stopwatch& release, String& game) {
 		bool hitf = false;
 		for (int x = 0; x < FIELD_WIDTH; ++x) {
 			if (field[0][x] != Palette::Black) {
-				game = U"over";
+				game = U"over";		//ゲームオーバー処理に切り替え
 			}
 		}
 		for (int y = 0; y < MINO_HEIGHT; ++y) {
 			for (int x = 0; x < MINO_WIDTH; ++x) {
+				//移動猶予終了後ミノを配置
 				if (mino[t][r][y][x] != Palette::Black && release >= 0.5s) {
 					field[ty + y][tx + x] = mino[t][r][y][x];
 					hitf = true;
 				}
+				//猶予カウント開始
 				else if (mino[t][r][y][x] != Palette::Black && release <= 0s) {
 					release.start();
 				}
@@ -439,89 +457,9 @@ public:
 		}
 	}
 
-	/// @brief ミノが底辺もしくは、他のミノとぶつかった時true
-	/// @param[in] r ミノのアングル
-	/// @param[in] t ミノの形
-	/// @return ミノが底辺と他ミノとhitしたか否かをtrue,falseで返す
-	bool hit(int r, int t) {
-		for (int y = MINO_HEIGHT - 1; y >= 0; --y) {
-			for (int x = 0; x < MINO_WIDTH; ++x) {
-				if (mino[t][r][y][x] != Palette::Black) {
-					
-					if (field[fy + y][fx + x] != Palette::Black) {
-						fy -= 1;
-					}
-					if (field[fy + y + 1][fx + x] != Palette::Black || y + fy >= FIELD_HEIGHT - 1)
-					{
-						if (y + fy >= FIELD_HEIGHT) {
-							fy = (FIELD_HEIGHT - 1) - pyu; //yが底辺を超えたら補正する
-						}
-						return true;
-					}
-						
-
-				}
-				
-			}
-		}
-		return false;
-	}
-
 	
-	/// @brief ミノの両端を調べる
-	/// @param[in, out] tx1 ミノの左端
-	/// @param[in,out] tx2 ミノの右端
-	/// @param[in] t ミノの形 
-	/// @param[in] r ミノのアングル
-	void ret_px(int& tx1, int& tx2, int t, int r) {
-		bool flag = false;
-		//ミノの左端を調べる
-		for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
-			for (int y = 0; y < MINO_HEIGHT && flag != true; ++y) {
-				if (mino[t][r][y][x] != Palette::Black) {
-					tx1 = x;
-					flag = true;	// 見つけたらループを抜ける
-				}
-			}
-		}
-		flag = false;
-		//ミノの右端を調べる
-		for (int x = MINO_WIDTH - 1; x >= 0 && flag != true; --x) {
-			for (int y = MINO_HEIGHT - 1; y >= 0 && flag != true; --y) {
-				if (mino[t][r][y][x] != Palette::Black) {
-					tx2 = x;
-					flag = true;	 //見つけたらループを抜ける
-				}
-			}
-		}
-	}
+	
 
-	/// @brief ミノの上端、下端を調べる
-	/// @param[out] ty1 ミノの上端
-	/// @param[out] ty2 ミノの下端
-	/// @param[in] t ミノの形
-	/// @param[in] r ミノのアングル
-	void ret_py(int& ty1, int& ty2, int t, int r) {
-		bool flag = false;
-		for (int y = 0; y < MINO_HEIGHT && flag != true; ++y) {
-			for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
-				if (mino[t][r][y][x] != Palette::Black) {
-					ty1 = y;
-					flag = true;
-				}
-			}
-		}
-		flag = false;
-		for (int y = MINO_HEIGHT - 1, count = 0; y >= 0 && flag != true; --y, ++count) {
-			for (int x = 0; x < MINO_WIDTH && flag != true; ++x) {
-				if (mino[t][r][y][x] != Palette::Black) {
-					ty2 = y;
-					pyu = count;
-					flag = true;
-				}
-			}
-		}
-	}
 
 
 
@@ -533,28 +471,20 @@ public:
 	/// @param[in, out] game ゲームのステート
 	void move(int& r, int& t, Stopwatch& time, Stopwatch& release, String& game) {
 		
-		ret_px(px1, px2, t, r);
 		//Zを押したときアングルを90°正回転
 		if (KeyZ.down()) {
 			int d = determine_field_boundary(t, r1(r), fx, fy);
-			//回転後の左端x1,右端x2
-			/*int x1 = 0, x2 = 0;
-			ret_px(x1, x2, t, (r + 1 > 4) ? 0 : r + 1);*/
 			//回転後端を超えてしまう場合補正
-			/*
-			if (fx < 0 - x1) {
-				fx = 0 - x1;
-			}
-			else if (fx >= FIELD_WIDTH - x2) {
-				fx = FIELD_WIDTH - 1 - x2;
-			}*/
+
 			if (d == 0 &&
 				is_collision_field(fx, fy, t, r1(r)) == false) {
 				++r;
 			}
+			///回転後画面端を超える場合補正
 			else if (d != 0 &&
 				is_collision_field(fx, fy, t, r1(r)) == false) {
 				int tx = fx, ty = fy;
+				//画面内に収まるまでループ
 				while ((d= determine_field_boundary(t, r1(r), tx, ty)) != 0) {
 					
 					if ((d & (1 << 0)) != 0) {
@@ -570,6 +500,7 @@ public:
 						--ty;
 					}
 				}
+				//他ミノとぶつかる場合何もしない
 				if (is_collision_field(tx, ty, t, r1(r)) == false) {
 					fx = tx;
 					fy = ty;
@@ -583,15 +514,7 @@ public:
 		}
 		//Xを押したとき90°逆回転
 		if (KeyX.down()) {
-			/*
-			int x1 = 0, x2 = 0;
-			ret_px(x1, x2, t, (r - 1 < 0) ? 3 : r - 1);
-			if (fx < 0 - x1) {
-				fx = 0 - x1;
-			}
-			else if (fx >= FIELD_WIDTH - x2) {
-				fx = FIELD_WIDTH - 1 - x2;
-			}*/
+			
 
 			int d = determine_field_boundary(t, r2(r), fx, fy);
 			if (d == 0 &&
@@ -662,43 +585,9 @@ public:
 					}
 				}
 			}
-			if (fx >= FIELD_WIDTH - px2) {
-				fx = FIELD_WIDTH - 1 - px2;
-			}
-
-
 		}
 
-		/*
-		ret_py(py1, py2, t, r);
-
-		//衝突判定
-		if (hit(r, t) == true) {
-			bool hitf = false;
-			for (int x = 0; x < FIELD_WIDTH; ++x) {
-				if (field[0][x] != Palette::Black) {
-					game = U"over";
-				}
-			}
-			//ミノが他ミノと衝突及び画面一番下に到達時、0.5秒の回転操作及び左右移動の猶予を与える
-			for (int y = 0; y < MINO_HEIGHT; ++y) {
-				for (int x = 0; x < MINO_WIDTH; ++x) {
-					if (mino[t][r][y][x] != Palette::Black && release >= 0.5s) {
-						field[fy + y][fx + x] = mino[t][r][y][x];
-						hitf = true;
-					}
-					else if (mino[t][r][y][x] != Palette::Black && release <= 0s) {
-						release.start();
-					}
-				}
-			}
-			//次のミノを呼び出す
-			if (hitf == true) {
-				release.reset();
-				t = reset_mino();
-			}
-		}
-		*/
+		
 		//時間ごとのミノの下降
 		if (time >= 0.5s && release <= 0s) {
 			if (determine_field_boundary(t, r, fx, fy + 1) == 0 &&
@@ -799,11 +688,13 @@ public:
 	}
 	//ランダムにミノの形のインデックスを返す
 	int rand_t() {
-		int t =  Random((TYPE_I, (TYPE_MAX - 1))), ty1 = 0, ty2 = 0;
-		ret_py(ty1, ty2, t, 0);
-		fy = -ty1;
+		int t =  Random((TYPE_I, (TYPE_MAX - 1))),
+			x0, x1, y0, y1;
+		get_contents(t, 0, x0, y0, x1, y1);
+		fy = -y0;
 		return t;
 	}
+	//盤面の初期化
 	void reset() {
 		for (int y = 0; y < FIELD_HEIGHT; ++y) {
 			for (int x = 0; x < FIELD_WIDTH; ++x) {
